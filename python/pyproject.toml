@@ -1,0 +1,26 @@
+[build-system]
+# maturin >= 1.9 understands the pyo3 abi3 feature and free-threaded targets.
+requires = ["maturin>=1.9,<2"]
+build-backend = "maturin"
+
+[project]
+name = "morfeusz2"
+version = "1.99.15"
+description = "Python bindings for Morfeusz 2"
+readme = "README.md"
+# abi3-py39: one forward-compatible wheel for CPython 3.9+. Free-threaded
+# interpreters get their own version-specific wheels (abi3 auto-disabled).
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Rust",
+]
+
+[project.urls]
+Homepage = "https://morfeusz.sgjp.pl"
+Repository = "https://github.com/sgjp/morfeusz"
+
+[tool.maturin]
+module-name = "morfeusz2"
+features = ["pyo3/extension-module"]

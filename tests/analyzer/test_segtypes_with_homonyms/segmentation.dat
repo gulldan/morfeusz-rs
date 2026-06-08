@@ -1,0 +1,34 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+
+samodzielnie
+euro> z_euro
+
+[segment types]
+euro
+z_euro
+samodzielnie
+nigdy
+
+[lexemes]
+z_euro	kot:zwierze	subst:%
+samodzielnie	kot	subst:%
+z_euro	pies	subst:%
+samodzielnie	pies:homonim	subst:%
+euro	euro	prefs
+
+[tags]
+nigdy	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

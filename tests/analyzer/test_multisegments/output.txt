@@ -1,0 +1,8 @@
+[0,1,biało,biały,adja,_,_]
+[1,2,-,-,interp,_,_]
+[2,3,czerwony,czerwony,adj:sg:nom.voc:m1.m2.m3:pos,_,_]
+[0,1,biało,biały,adja,_,_]
+[1,2,-,-,interp,_,_]
+[2,3,czerwony,czerwony,adj:sg:nom.voc:m1.m2.m3:pos,_,_]
+[3,4,.,.,ign,_,_]
+

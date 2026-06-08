@@ -1,0 +1,17 @@
+[package]
+name = "morfeusz-rs"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license-file.workspace = true
+readme.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+name = "morfeusz"
+
+[dependencies]
+
+[dev-dependencies]
+morfeusz-builder = { path = "../builder" }

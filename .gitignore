@@ -1,0 +1,15 @@
+# Rust build artifacts
+/target
+**/*.rs.bk
+
+# Python tooling
+__pycache__/
+*.pyc
+.venv/
+
+# Optional C++ reference build for differential testing (built externally)
+/build-cpp-ref*/
+/build-cpp-pybind/
+
+# Downloaded corpora / dictionaries are not committed (see tests/diff_corpus)
+/data/dictionary.bin

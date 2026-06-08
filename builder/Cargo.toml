@@ -1,0 +1,13 @@
+[package]
+name = "morfeusz-builder"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license-file.workspace = true
+readme.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+name = "morfeusz_builder"
+path = "src/lib.rs"

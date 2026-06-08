@@ -1,0 +1,6 @@
+[0,1,kot,kot:nazwisko,subst:sg:nom:m1,nazwisko,samodzielnie]
+[0,1,eurokot,eurokot:zwierze,subst:sg:nom:m1,_,samodzielnie|euro]
+[0,1,pies,pies,ign,_,_]
+[0,1,europies,europies,subst:sg:acc:m3,_,euro
+ 0,1,europies,europies,subst:sg:nom:m1,nazwisko,euro]
+

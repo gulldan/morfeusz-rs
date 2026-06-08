@@ -1,0 +1,45 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+
+samodzielnie
+mikro> tylko_z_mikro
+euro> tylko_z_euro
+super> tylko_z_super
+
+[segment types]
+tylko_z_mikro
+tylko_z_euro
+tylko_z_super
+samodzielnie
+nigdy
+mikro
+euro
+super
+
+[lexemes]
+tylko_z_mikro	kot	subst:%	name=imie	labels=zzz
+tylko_z_euro	kot	subst:%	name=nazwisko
+tylko_z_super	kot	subst:%	labels=xxx|yyy
+samodzielnie	kot	subst:%
+
+mikro	mikro	%
+euro	euro	%
+super	super	%
+
+[tags]
+tylko_z_euro	subst:%	labels=aaa
+samodzielnie	subst:%
+nigdy	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

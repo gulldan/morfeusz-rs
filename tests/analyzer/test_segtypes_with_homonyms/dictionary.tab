@@ -1,0 +1,5 @@
+euro	euro	prefs
+kot	kot:zwierze	subst:sg:nom:m1		euro|samodzielnie
+kot	kot:nazwisko	subst:sg:nom:m1	nazwisko	samodzielnie
+pies	pies	subst:sg:acc:m3		euro
+pies	pies	subst:sg:nom:m1	nazwisko	euro

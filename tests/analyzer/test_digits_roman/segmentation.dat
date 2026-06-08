@@ -1,0 +1,90 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+#define wsz_interp (interp|kropka|przecinek|dywiz)*
+
+#define moze_interp(segmenty) wsz_interp segmenty wsz_interp
+
+# Segmenty występujące samodzielnie:
+#
+# domyślny typ segmentu samodzielnego:
+moze_interp(samodz)
+
+# Pojedyncze znaki interpunkcyjne
+moze_interp(interp|kropka|przecinek|dywiz)
+
+# Liczba zapisana jako ciąg cyfr:
+moze_interp( dig>* dig )
+
+### LICZBY RZYMSKIE - reguły - START
+
+#define	one_to_three(rdig)	(rdig>{0,2} rdig)
+
+#define rzymskie1	( (romandigI> romandigX) | romandigV | (romandigV> one_to_three(romandigI)) | (romandigI> romandigV) | one_to_three(romandigI) )
+#define rzymskie10	( (romandigX> romandigC) | romandigL | (romandigL> one_to_three(romandigX)) | (romandigX> romandigL) | one_to_three(romandigX) )
+#define rzymskie100	( (romandigC> romandigM) | romandigD | (romandigD> one_to_three(romandigC)) | (romandigC> romandigD) | one_to_three(romandigC) )
+#define rzymskie1000	( one_to_three(romandigM) )
+
+#define rzymskie1_shift	( (romandigI> romandigX>) | (romandigV> romandigI>{0,3}) | (romandigI> romandigV>) | romandigI>{1,3} )
+#define rzymskie10_shift	( (romandigX> romandigC>) | (romandigL> romandigX>{0,3}) | (romandigX> romandigL>) | romandigX>{1,3} )
+#define rzymskie100_shift	( (romandigC> romandigM>) | (romandigD> romandigC>{0,3}) | (romandigC> romandigD>) | romandigC>{1,3} )
+#define rzymskie1000_shift	( romandigM>{1,3} )
+
+#define liczba_rzymska  ((rzymskie1000_shift? rzymskie100_shift? rzymskie10_shift? rzymskie1) | (rzymskie1000_shift? rzymskie100_shift? rzymskie10) | (rzymskie1000_shift? rzymskie100) | rzymskie1000)
+
+
+# Liczby rzymskie
+moze_interp(liczba_rzymska)
+
+### LICZBY RZYMSKIE - reguły - KONIEC
+
+[segment types]
+interp
+kropka
+przecinek
+dywiz
+dig
+
+### LICZBY RZYMSKIE - typy segmentów - START
+romandigI
+romandigV
+romandigX
+romandigL
+romandigC
+romandigD
+romandigM
+### LICZBY RZYMSKIE - typy segmentów - KONIEC
+
+samodz
+
+[lexemes]
+kropka	.	interp
+przecinek	,	interp
+dywiz	-	interp
+
+### LICZBY RZYMSKIE - Leksemy - START
+romandigI	I	romandig
+romandigV	V	romandig
+romandigX	X	romandig
+romandigL	L	romandig
+romandigC	C	romandig
+romandigD	D	romandig
+romandigM	M	romandig
+### LICZBY RZYMSKIE - Leksemy - KONIEC
+
+[tags]
+dig	dig
+interp	interp
+samodz	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

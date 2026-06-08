@@ -1,0 +1,773 @@
+kot
+eurokot
+superkot
+mikrokot
+kotkot
+pies
+europies
+superpies
+mikropies
+mikro
+MIKRO
+mikro
+Mikro
+MIKRO
+euro
+EURO
+euro
+Euro
+EURO
+super
+SUPER
+super
+Super
+SUPER
+kot
+KOT
+kot
+Kot
+KOT
+pies
+PIES
+pies
+Pies
+PIES
+mikro123
+123mikro
+mikrox
+xmikro
+mikromikro
+euro123
+123euro
+eurox
+xeuro
+euroeuro
+super123
+123super
+superx
+xsuper
+supersuper
+kot123
+123kot
+kotx
+xkot
+kotkot
+mikro.mikro
+mikro,mikro
+mikro;mikro
+mikro-mikro
+mikro:mikro
+mikro?mikro
+mikro!mikro
+mikro/mikro
+mikro(mikro
+mikro)mikro
+mikro mikro
+mikro  mikro
+mikro	mikro
+mikro-mikro
+mikromikro
+mikro.euro
+mikro,euro
+mikro;euro
+mikro-euro
+mikro:euro
+mikro?euro
+mikro!euro
+mikro/euro
+mikro(euro
+mikro)euro
+mikro euro
+mikro  euro
+mikro	euro
+mikro-euro
+mikroeuro
+mikro.super
+mikro,super
+mikro;super
+mikro-super
+mikro:super
+mikro?super
+mikro!super
+mikro/super
+mikro(super
+mikro)super
+mikro super
+mikro  super
+mikro	super
+mikro-super
+mikrosuper
+mikro.kot
+mikro,kot
+mikro;kot
+mikro-kot
+mikro:kot
+mikro?kot
+mikro!kot
+mikro/kot
+mikro(kot
+mikro)kot
+mikro kot
+mikro  kot
+mikro	kot
+mikro-kot
+mikrokot
+mikro.pies
+mikro,pies
+mikro;pies
+mikro-pies
+mikro:pies
+mikro?pies
+mikro!pies
+mikro/pies
+mikro(pies
+mikro)pies
+mikro pies
+mikro  pies
+mikro	pies
+mikro-pies
+mikropies
+mikro.xyzzy
+mikro,xyzzy
+mikro;xyzzy
+mikro-xyzzy
+mikro:xyzzy
+mikro?xyzzy
+mikro!xyzzy
+mikro/xyzzy
+mikro(xyzzy
+mikro)xyzzy
+mikro xyzzy
+mikro  xyzzy
+mikro	xyzzy
+mikro-xyzzy
+mikroxyzzy
+mikro.Qmpx
+mikro,Qmpx
+mikro;Qmpx
+mikro-Qmpx
+mikro:Qmpx
+mikro?Qmpx
+mikro!Qmpx
+mikro/Qmpx
+mikro(Qmpx
+mikro)Qmpx
+mikro Qmpx
+mikro  Qmpx
+mikro	Qmpx
+mikro-Qmpx
+mikroQmpx
+mikro.123
+mikro,123
+mikro;123
+mikro-123
+mikro:123
+mikro?123
+mikro!123
+mikro/123
+mikro(123
+mikro)123
+mikro 123
+mikro  123
+mikro	123
+mikro-123
+mikro123
+mikro.VII
+mikro,VII
+mikro;VII
+mikro-VII
+mikro:VII
+mikro?VII
+mikro!VII
+mikro/VII
+mikro(VII
+mikro)VII
+mikro VII
+mikro  VII
+mikro	VII
+mikro-VII
+mikroVII
+euro.euro
+euro,euro
+euro;euro
+euro-euro
+euro:euro
+euro?euro
+euro!euro
+euro/euro
+euro(euro
+euro)euro
+euro euro
+euro  euro
+euro	euro
+euro-euro
+euroeuro
+euro.super
+euro,super
+euro;super
+euro-super
+euro:super
+euro?super
+euro!super
+euro/super
+euro(super
+euro)super
+euro super
+euro  super
+euro	super
+euro-super
+eurosuper
+euro.kot
+euro,kot
+euro;kot
+euro-kot
+euro:kot
+euro?kot
+euro!kot
+euro/kot
+euro(kot
+euro)kot
+euro kot
+euro  kot
+euro	kot
+euro-kot
+eurokot
+euro.pies
+euro,pies
+euro;pies
+euro-pies
+euro:pies
+euro?pies
+euro!pies
+euro/pies
+euro(pies
+euro)pies
+euro pies
+euro  pies
+euro	pies
+euro-pies
+europies
+euro.xyzzy
+euro,xyzzy
+euro;xyzzy
+euro-xyzzy
+euro:xyzzy
+euro?xyzzy
+euro!xyzzy
+euro/xyzzy
+euro(xyzzy
+euro)xyzzy
+euro xyzzy
+euro  xyzzy
+euro	xyzzy
+euro-xyzzy
+euroxyzzy
+euro.Qmpx
+euro,Qmpx
+euro;Qmpx
+euro-Qmpx
+euro:Qmpx
+euro?Qmpx
+euro!Qmpx
+euro/Qmpx
+euro(Qmpx
+euro)Qmpx
+euro Qmpx
+euro  Qmpx
+euro	Qmpx
+euro-Qmpx
+euroQmpx
+euro.123
+euro,123
+euro;123
+euro-123
+euro:123
+euro?123
+euro!123
+euro/123
+euro(123
+euro)123
+euro 123
+euro  123
+euro	123
+euro-123
+euro123
+euro.VII
+euro,VII
+euro;VII
+euro-VII
+euro:VII
+euro?VII
+euro!VII
+euro/VII
+euro(VII
+euro)VII
+euro VII
+euro  VII
+euro	VII
+euro-VII
+euroVII
+super.super
+super,super
+super;super
+super-super
+super:super
+super?super
+super!super
+super/super
+super(super
+super)super
+super super
+super  super
+super	super
+super-super
+supersuper
+super.kot
+super,kot
+super;kot
+super-kot
+super:kot
+super?kot
+super!kot
+super/kot
+super(kot
+super)kot
+super kot
+super  kot
+super	kot
+super-kot
+superkot
+super.pies
+super,pies
+super;pies
+super-pies
+super:pies
+super?pies
+super!pies
+super/pies
+super(pies
+super)pies
+super pies
+super  pies
+super	pies
+super-pies
+superpies
+super.xyzzy
+super,xyzzy
+super;xyzzy
+super-xyzzy
+super:xyzzy
+super?xyzzy
+super!xyzzy
+super/xyzzy
+super(xyzzy
+super)xyzzy
+super xyzzy
+super  xyzzy
+super	xyzzy
+super-xyzzy
+superxyzzy
+super.Qmpx
+super,Qmpx
+super;Qmpx
+super-Qmpx
+super:Qmpx
+super?Qmpx
+super!Qmpx
+super/Qmpx
+super(Qmpx
+super)Qmpx
+super Qmpx
+super  Qmpx
+super	Qmpx
+super-Qmpx
+superQmpx
+super.123
+super,123
+super;123
+super-123
+super:123
+super?123
+super!123
+super/123
+super(123
+super)123
+super 123
+super  123
+super	123
+super-123
+super123
+super.VII
+super,VII
+super;VII
+super-VII
+super:VII
+super?VII
+super!VII
+super/VII
+super(VII
+super)VII
+super VII
+super  VII
+super	VII
+super-VII
+superVII
+kot.kot
+kot,kot
+kot;kot
+kot-kot
+kot:kot
+kot?kot
+kot!kot
+kot/kot
+kot(kot
+kot)kot
+kot kot
+kot  kot
+kot	kot
+kot-kot
+kotkot
+kot.pies
+kot,pies
+kot;pies
+kot-pies
+kot:pies
+kot?pies
+kot!pies
+kot/pies
+kot(pies
+kot)pies
+kot pies
+kot  pies
+kot	pies
+kot-pies
+kotpies
+kot.xyzzy
+kot,xyzzy
+kot;xyzzy
+kot-xyzzy
+kot:xyzzy
+kot?xyzzy
+kot!xyzzy
+kot/xyzzy
+kot(xyzzy
+kot)xyzzy
+kot xyzzy
+kot  xyzzy
+kot	xyzzy
+kot-xyzzy
+kotxyzzy
+kot.Qmpx
+kot,Qmpx
+kot;Qmpx
+kot-Qmpx
+kot:Qmpx
+kot?Qmpx
+kot!Qmpx
+kot/Qmpx
+kot(Qmpx
+kot)Qmpx
+kot Qmpx
+kot  Qmpx
+kot	Qmpx
+kot-Qmpx
+kotQmpx
+kot.123
+kot,123
+kot;123
+kot-123
+kot:123
+kot?123
+kot!123
+kot/123
+kot(123
+kot)123
+kot 123
+kot  123
+kot	123
+kot-123
+kot123
+kot.VII
+kot,VII
+kot;VII
+kot-VII
+kot:VII
+kot?VII
+kot!VII
+kot/VII
+kot(VII
+kot)VII
+kot VII
+kot  VII
+kot	VII
+kot-VII
+kotVII
+pies.pies
+pies,pies
+pies;pies
+pies-pies
+pies:pies
+pies?pies
+pies!pies
+pies/pies
+pies(pies
+pies)pies
+pies pies
+pies  pies
+pies	pies
+pies-pies
+piespies
+pies.xyzzy
+pies,xyzzy
+pies;xyzzy
+pies-xyzzy
+pies:xyzzy
+pies?xyzzy
+pies!xyzzy
+pies/xyzzy
+pies(xyzzy
+pies)xyzzy
+pies xyzzy
+pies  xyzzy
+pies	xyzzy
+pies-xyzzy
+piesxyzzy
+pies.Qmpx
+pies,Qmpx
+pies;Qmpx
+pies-Qmpx
+pies:Qmpx
+pies?Qmpx
+pies!Qmpx
+pies/Qmpx
+pies(Qmpx
+pies)Qmpx
+pies Qmpx
+pies  Qmpx
+pies	Qmpx
+pies-Qmpx
+piesQmpx
+pies.123
+pies,123
+pies;123
+pies-123
+pies:123
+pies?123
+pies!123
+pies/123
+pies(123
+pies)123
+pies 123
+pies  123
+pies	123
+pies-123
+pies123
+pies.VII
+pies,VII
+pies;VII
+pies-VII
+pies:VII
+pies?VII
+pies!VII
+pies/VII
+pies(VII
+pies)VII
+pies VII
+pies  VII
+pies	VII
+pies-VII
+piesVII
+xyzzy.xyzzy
+xyzzy,xyzzy
+xyzzy;xyzzy
+xyzzy-xyzzy
+xyzzy:xyzzy
+xyzzy?xyzzy
+xyzzy!xyzzy
+xyzzy/xyzzy
+xyzzy(xyzzy
+xyzzy)xyzzy
+xyzzy xyzzy
+xyzzy  xyzzy
+xyzzy	xyzzy
+xyzzy-xyzzy
+xyzzyxyzzy
+xyzzy.Qmpx
+xyzzy,Qmpx
+xyzzy;Qmpx
+xyzzy-Qmpx
+xyzzy:Qmpx
+xyzzy?Qmpx
+xyzzy!Qmpx
+xyzzy/Qmpx
+xyzzy(Qmpx
+xyzzy)Qmpx
+xyzzy Qmpx
+xyzzy  Qmpx
+xyzzy	Qmpx
+xyzzy-Qmpx
+xyzzyQmpx
+xyzzy.123
+xyzzy,123
+xyzzy;123
+xyzzy-123
+xyzzy:123
+xyzzy?123
+xyzzy!123
+xyzzy/123
+xyzzy(123
+xyzzy)123
+xyzzy 123
+xyzzy  123
+xyzzy	123
+xyzzy-123
+xyzzy123
+xyzzy.VII
+xyzzy,VII
+xyzzy;VII
+xyzzy-VII
+xyzzy:VII
+xyzzy?VII
+xyzzy!VII
+xyzzy/VII
+xyzzy(VII
+xyzzy)VII
+xyzzy VII
+xyzzy  VII
+xyzzy	VII
+xyzzy-VII
+xyzzyVII
+Qmpx.Qmpx
+Qmpx,Qmpx
+Qmpx;Qmpx
+Qmpx-Qmpx
+Qmpx:Qmpx
+Qmpx?Qmpx
+Qmpx!Qmpx
+Qmpx/Qmpx
+Qmpx(Qmpx
+Qmpx)Qmpx
+Qmpx Qmpx
+Qmpx  Qmpx
+Qmpx	Qmpx
+Qmpx-Qmpx
+QmpxQmpx
+Qmpx.123
+Qmpx,123
+Qmpx;123
+Qmpx-123
+Qmpx:123
+Qmpx?123
+Qmpx!123
+Qmpx/123
+Qmpx(123
+Qmpx)123
+Qmpx 123
+Qmpx  123
+Qmpx	123
+Qmpx-123
+Qmpx123
+Qmpx.VII
+Qmpx,VII
+Qmpx;VII
+Qmpx-VII
+Qmpx:VII
+Qmpx?VII
+Qmpx!VII
+Qmpx/VII
+Qmpx(VII
+Qmpx)VII
+Qmpx VII
+Qmpx  VII
+Qmpx	VII
+Qmpx-VII
+QmpxVII
+123.123
+123,123
+123;123
+123-123
+123:123
+123?123
+123!123
+123/123
+123(123
+123)123
+123 123
+123  123
+123	123
+123-123
+123123
+123.VII
+123,VII
+123;VII
+123-VII
+123:VII
+123?VII
+123!VII
+123/VII
+123(VII
+123)VII
+123 VII
+123  VII
+123	VII
+123-VII
+123VII
+VII.VII
+VII,VII
+VII;VII
+VII-VII
+VII:VII
+VII?VII
+VII!VII
+VII/VII
+VII(VII
+VII)VII
+VII VII
+VII  VII
+VII	VII
+VII-VII
+VIIVII
+.mikro.
+(mikro)
+mikro...
+-mikro-
+mikro,mikro;mikro
+  mikro  
+	mikro	
+.euro.
+(euro)
+euro...
+-euro-
+euro,euro;euro
+  euro  
+	euro	
+.super.
+(super)
+super...
+-super-
+super,super;super
+  super  
+	super	
+.
+..
+...
+,
+;
+-
+--
+.,;
+?!
+()
+
+ 
+   
+a.b.c.d
+1,2,3
+x-y-z
+co?
+n.p.
+p.n.e.
+tzn.
+O.K.
+3.14
+1+1

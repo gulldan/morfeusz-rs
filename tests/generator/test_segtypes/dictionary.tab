@@ -1,0 +1,11 @@
+mikro	mikro	prefs
+euro	euro	prefs
+super	super	prefs
+kot	kot	subst:sg:nom:m1	imie	mikro|zzz
+kot	kot	subst:sg:nom:m1	nazwisko	euro
+kot	kot	subst:sg:nom:m1		xxx|yyy|super
+kot	kot	subst:sg:nom:m1		samodzielnie|zzz
+kot	kot	subst:sg:nom:m2	imie	samodzielnie
+kot	kot	adj:sg:acc:m3:pos		nigdy
+pies	pies	subst:sg:acc:m3		aaa|zzz|euro
+pies	pies	subst:sg:nom:m1	nazwisko	yyy|zzz|samodzielnie

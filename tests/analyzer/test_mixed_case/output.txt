@@ -1,0 +1,14 @@
+[0,1,iphone,iPhone:s2,subst:sg:nom:m1,wlasna,_]
+[1,2,latex,latex,subst:sg:nom:m2,pospolita,_]
+[2,3,iPhone,iPhone:s2,subst:sg:nom:m1,wlasna,_]
+[3,4,LaTeX,latex,subst:sg:nom:m2,pospolita,_
+ 3,4,LaTeX,LaTeX:s1,subst:sg:nom:m1,wlasna,_]
+[4,5,nie-iPhone,nie-iPhone:s2,subst:sg:nom:m1,wlasna,_]
+[5,6,nie-iphone,nie-iPhone:s2,subst:sg:nom:m1,wlasna,_]
+[6,7,nie-latex,nie-latex,subst:sg:nom:m2,pospolita,_]
+[7,8,nie-LaTeX,nie-latex,subst:sg:nom:m2,pospolita,_
+ 7,8,nie-LaTeX,nie-LaTeX:s1,subst:sg:nom:m1,wlasna,_]
+[8,9,iPhone-LaTeX,iPhone-latex,subst:sg:nom:m2,pospolita,_
+ 8,9,iPhone-LaTeX,iPhone-LaTeX:s1,subst:sg:nom:m1,wlasna,_]
+[9,10,iphone-latex,iPhone-latex,subst:sg:nom:m2,pospolita,_]
+

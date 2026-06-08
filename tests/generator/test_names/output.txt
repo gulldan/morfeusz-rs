@@ -1,0 +1,4 @@
+[czerwony,czerwony:a1,adj:sg:acc:m3:pos,pospolita,_
+ czerwony,czerwony:a2,adj:sg:acc:m3:pos,niepospolita,_
+ czerwony,czerwony:a3,adj:sg:acc:m3:pos,zażółć gęślą jaźń,_]
+

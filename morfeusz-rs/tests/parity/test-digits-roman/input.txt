@@ -1,0 +1,825 @@
+I
+II
+III
+IV
+V
+VI
+VII
+VIII
+IX
+X
+XI
+XII
+XIII
+XV
+XX
+XXX
+XL
+L
+LX
+LXX
+LXXX
+XC
+C
+CC
+CCXVII
+CD
+DC
+DCCC
+MMCD
+MMDC
+M
+MMX
+MMXIV
+
+IIII
+XXXX
+LXIIII
+VV
+LC
+XXC
+LL
+LLX
+
+x
+xx
+MmXiV
+0
+0
+0
+0
+0
+1
+1
+1
+1
+1
+2
+2
+2
+2
+2
+3
+3
+3
+3
+3
+4
+4
+4
+4
+4
+5
+5
+5
+5
+5
+6
+6
+6
+6
+6
+7
+7
+7
+7
+7
+0123
+1230
+0x
+x0
+00
+1123
+1231
+1x
+x1
+11
+2123
+1232
+2x
+x2
+22
+3123
+1233
+3x
+x3
+33
+0.0
+0,0
+0;0
+0-0
+0:0
+0?0
+0!0
+0/0
+0(0
+0)0
+0 0
+0  0
+0	0
+0-0
+00
+0.1
+0,1
+0;1
+0-1
+0:1
+0?1
+0!1
+0/1
+0(1
+0)1
+0 1
+0  1
+0	1
+0-1
+01
+0.2
+0,2
+0;2
+0-2
+0:2
+0?2
+0!2
+0/2
+0(2
+0)2
+0 2
+0  2
+0	2
+0-2
+02
+0.3
+0,3
+0;3
+0-3
+0:3
+0?3
+0!3
+0/3
+0(3
+0)3
+0 3
+0  3
+0	3
+0-3
+03
+0.4
+0,4
+0;4
+0-4
+0:4
+0?4
+0!4
+0/4
+0(4
+0)4
+0 4
+0  4
+0	4
+0-4
+04
+0.xyzzy
+0,xyzzy
+0;xyzzy
+0-xyzzy
+0:xyzzy
+0?xyzzy
+0!xyzzy
+0/xyzzy
+0(xyzzy
+0)xyzzy
+0 xyzzy
+0  xyzzy
+0	xyzzy
+0-xyzzy
+0xyzzy
+0.Qmpx
+0,Qmpx
+0;Qmpx
+0-Qmpx
+0:Qmpx
+0?Qmpx
+0!Qmpx
+0/Qmpx
+0(Qmpx
+0)Qmpx
+0 Qmpx
+0  Qmpx
+0	Qmpx
+0-Qmpx
+0Qmpx
+0.123
+0,123
+0;123
+0-123
+0:123
+0?123
+0!123
+0/123
+0(123
+0)123
+0 123
+0  123
+0	123
+0-123
+0123
+0.VII
+0,VII
+0;VII
+0-VII
+0:VII
+0?VII
+0!VII
+0/VII
+0(VII
+0)VII
+0 VII
+0  VII
+0	VII
+0-VII
+0VII
+1.1
+1,1
+1;1
+1-1
+1:1
+1?1
+1!1
+1/1
+1(1
+1)1
+1 1
+1  1
+1	1
+1-1
+11
+1.2
+1,2
+1;2
+1-2
+1:2
+1?2
+1!2
+1/2
+1(2
+1)2
+1 2
+1  2
+1	2
+1-2
+12
+1.3
+1,3
+1;3
+1-3
+1:3
+1?3
+1!3
+1/3
+1(3
+1)3
+1 3
+1  3
+1	3
+1-3
+13
+1.4
+1,4
+1;4
+1-4
+1:4
+1?4
+1!4
+1/4
+1(4
+1)4
+1 4
+1  4
+1	4
+1-4
+14
+1.xyzzy
+1,xyzzy
+1;xyzzy
+1-xyzzy
+1:xyzzy
+1?xyzzy
+1!xyzzy
+1/xyzzy
+1(xyzzy
+1)xyzzy
+1 xyzzy
+1  xyzzy
+1	xyzzy
+1-xyzzy
+1xyzzy
+1.Qmpx
+1,Qmpx
+1;Qmpx
+1-Qmpx
+1:Qmpx
+1?Qmpx
+1!Qmpx
+1/Qmpx
+1(Qmpx
+1)Qmpx
+1 Qmpx
+1  Qmpx
+1	Qmpx
+1-Qmpx
+1Qmpx
+1.123
+1,123
+1;123
+1-123
+1:123
+1?123
+1!123
+1/123
+1(123
+1)123
+1 123
+1  123
+1	123
+1-123
+1123
+1.VII
+1,VII
+1;VII
+1-VII
+1:VII
+1?VII
+1!VII
+1/VII
+1(VII
+1)VII
+1 VII
+1  VII
+1	VII
+1-VII
+1VII
+2.2
+2,2
+2;2
+2-2
+2:2
+2?2
+2!2
+2/2
+2(2
+2)2
+2 2
+2  2
+2	2
+2-2
+22
+2.3
+2,3
+2;3
+2-3
+2:3
+2?3
+2!3
+2/3
+2(3
+2)3
+2 3
+2  3
+2	3
+2-3
+23
+2.4
+2,4
+2;4
+2-4
+2:4
+2?4
+2!4
+2/4
+2(4
+2)4
+2 4
+2  4
+2	4
+2-4
+24
+2.xyzzy
+2,xyzzy
+2;xyzzy
+2-xyzzy
+2:xyzzy
+2?xyzzy
+2!xyzzy
+2/xyzzy
+2(xyzzy
+2)xyzzy
+2 xyzzy
+2  xyzzy
+2	xyzzy
+2-xyzzy
+2xyzzy
+2.Qmpx
+2,Qmpx
+2;Qmpx
+2-Qmpx
+2:Qmpx
+2?Qmpx
+2!Qmpx
+2/Qmpx
+2(Qmpx
+2)Qmpx
+2 Qmpx
+2  Qmpx
+2	Qmpx
+2-Qmpx
+2Qmpx
+2.123
+2,123
+2;123
+2-123
+2:123
+2?123
+2!123
+2/123
+2(123
+2)123
+2 123
+2  123
+2	123
+2-123
+2123
+2.VII
+2,VII
+2;VII
+2-VII
+2:VII
+2?VII
+2!VII
+2/VII
+2(VII
+2)VII
+2 VII
+2  VII
+2	VII
+2-VII
+2VII
+3.3
+3,3
+3;3
+3-3
+3:3
+3?3
+3!3
+3/3
+3(3
+3)3
+3 3
+3  3
+3	3
+3-3
+33
+3.4
+3,4
+3;4
+3-4
+3:4
+3?4
+3!4
+3/4
+3(4
+3)4
+3 4
+3  4
+3	4
+3-4
+34
+3.xyzzy
+3,xyzzy
+3;xyzzy
+3-xyzzy
+3:xyzzy
+3?xyzzy
+3!xyzzy
+3/xyzzy
+3(xyzzy
+3)xyzzy
+3 xyzzy
+3  xyzzy
+3	xyzzy
+3-xyzzy
+3xyzzy
+3.Qmpx
+3,Qmpx
+3;Qmpx
+3-Qmpx
+3:Qmpx
+3?Qmpx
+3!Qmpx
+3/Qmpx
+3(Qmpx
+3)Qmpx
+3 Qmpx
+3  Qmpx
+3	Qmpx
+3-Qmpx
+3Qmpx
+3.123
+3,123
+3;123
+3-123
+3:123
+3?123
+3!123
+3/123
+3(123
+3)123
+3 123
+3  123
+3	123
+3-123
+3123
+3.VII
+3,VII
+3;VII
+3-VII
+3:VII
+3?VII
+3!VII
+3/VII
+3(VII
+3)VII
+3 VII
+3  VII
+3	VII
+3-VII
+3VII
+4.4
+4,4
+4;4
+4-4
+4:4
+4?4
+4!4
+4/4
+4(4
+4)4
+4 4
+4  4
+4	4
+4-4
+44
+4.xyzzy
+4,xyzzy
+4;xyzzy
+4-xyzzy
+4:xyzzy
+4?xyzzy
+4!xyzzy
+4/xyzzy
+4(xyzzy
+4)xyzzy
+4 xyzzy
+4  xyzzy
+4	xyzzy
+4-xyzzy
+4xyzzy
+4.Qmpx
+4,Qmpx
+4;Qmpx
+4-Qmpx
+4:Qmpx
+4?Qmpx
+4!Qmpx
+4/Qmpx
+4(Qmpx
+4)Qmpx
+4 Qmpx
+4  Qmpx
+4	Qmpx
+4-Qmpx
+4Qmpx
+4.123
+4,123
+4;123
+4-123
+4:123
+4?123
+4!123
+4/123
+4(123
+4)123
+4 123
+4  123
+4	123
+4-123
+4123
+4.VII
+4,VII
+4;VII
+4-VII
+4:VII
+4?VII
+4!VII
+4/VII
+4(VII
+4)VII
+4 VII
+4  VII
+4	VII
+4-VII
+4VII
+xyzzy.xyzzy
+xyzzy,xyzzy
+xyzzy;xyzzy
+xyzzy-xyzzy
+xyzzy:xyzzy
+xyzzy?xyzzy
+xyzzy!xyzzy
+xyzzy/xyzzy
+xyzzy(xyzzy
+xyzzy)xyzzy
+xyzzy xyzzy
+xyzzy  xyzzy
+xyzzy	xyzzy
+xyzzy-xyzzy
+xyzzyxyzzy
+xyzzy.Qmpx
+xyzzy,Qmpx
+xyzzy;Qmpx
+xyzzy-Qmpx
+xyzzy:Qmpx
+xyzzy?Qmpx
+xyzzy!Qmpx
+xyzzy/Qmpx
+xyzzy(Qmpx
+xyzzy)Qmpx
+xyzzy Qmpx
+xyzzy  Qmpx
+xyzzy	Qmpx
+xyzzy-Qmpx
+xyzzyQmpx
+xyzzy.123
+xyzzy,123
+xyzzy;123
+xyzzy-123
+xyzzy:123
+xyzzy?123
+xyzzy!123
+xyzzy/123
+xyzzy(123
+xyzzy)123
+xyzzy 123
+xyzzy  123
+xyzzy	123
+xyzzy-123
+xyzzy123
+xyzzy.VII
+xyzzy,VII
+xyzzy;VII
+xyzzy-VII
+xyzzy:VII
+xyzzy?VII
+xyzzy!VII
+xyzzy/VII
+xyzzy(VII
+xyzzy)VII
+xyzzy VII
+xyzzy  VII
+xyzzy	VII
+xyzzy-VII
+xyzzyVII
+Qmpx.Qmpx
+Qmpx,Qmpx
+Qmpx;Qmpx
+Qmpx-Qmpx
+Qmpx:Qmpx
+Qmpx?Qmpx
+Qmpx!Qmpx
+Qmpx/Qmpx
+Qmpx(Qmpx
+Qmpx)Qmpx
+Qmpx Qmpx
+Qmpx  Qmpx
+Qmpx	Qmpx
+Qmpx-Qmpx
+QmpxQmpx
+Qmpx.123
+Qmpx,123
+Qmpx;123
+Qmpx-123
+Qmpx:123
+Qmpx?123
+Qmpx!123
+Qmpx/123
+Qmpx(123
+Qmpx)123
+Qmpx 123
+Qmpx  123
+Qmpx	123
+Qmpx-123
+Qmpx123
+Qmpx.VII
+Qmpx,VII
+Qmpx;VII
+Qmpx-VII
+Qmpx:VII
+Qmpx?VII
+Qmpx!VII
+Qmpx/VII
+Qmpx(VII
+Qmpx)VII
+Qmpx VII
+Qmpx  VII
+Qmpx	VII
+Qmpx-VII
+QmpxVII
+123.123
+123,123
+123;123
+123-123
+123:123
+123?123
+123!123
+123/123
+123(123
+123)123
+123 123
+123  123
+123	123
+123-123
+123123
+123.VII
+123,VII
+123;VII
+123-VII
+123:VII
+123?VII
+123!VII
+123/VII
+123(VII
+123)VII
+123 VII
+123  VII
+123	VII
+123-VII
+123VII
+VII.VII
+VII,VII
+VII;VII
+VII-VII
+VII:VII
+VII?VII
+VII!VII
+VII/VII
+VII(VII
+VII)VII
+VII VII
+VII  VII
+VII	VII
+VII-VII
+VIIVII
+.0.
+(0)
+0...
+-0-
+0,0;0
+  0  
+	0	
+.1.
+(1)
+1...
+-1-
+1,1;1
+  1  
+	1	
+.2.
+(2)
+2...
+-2-
+2,2;2
+  2  
+	2	
+.
+..
+...
+,
+;
+-
+--
+.,;
+?!
+()
+
+ 
+   
+a.b.c.d
+1,2,3
+x-y-z
+co?
+n.p.
+p.n.e.
+tzn.
+O.K.
+3.14
+1+1

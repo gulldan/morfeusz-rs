@@ -1,0 +1,34 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+
+prefs> subst
+prefs> dywiz> subst
+
+[segment types]
+prefs
+dywiz
+subst
+interp
+samodz
+
+[lexemes]
+dywiz	-	interp
+
+[tags]
+interp	interp
+prefs	prefs
+subst	subst:%
+samodz	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

@@ -1,0 +1,31 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+
+adja dywiz adj
+
+[segment types]
+adja
+dywiz
+adj
+samodz
+
+[lexemes]
+dywiz	-	interp
+
+[tags]
+adja	adja
+adj	adj:%
+samodz	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

@@ -1,0 +1,11 @@
+[0,1,arcypolak,arcypolak,ign,_,_]
+[0,1,arcyPolak,arcyPolak,ign,_,_]
+[0,1,Arcypolak,Arcypolak,subst:sg:nom:m2,pospolita,pot.|środ.]
+[0,1,ArcyPolak,Arcypolak,subst:sg:nom:m2,pospolita,pot.|środ.
+ 0,1,ArcyPolak,ArcyPolak:s1,subst:sg:nom:m1,pospolita,_
+ 0,1,ArcyPolak,ArcyPolak:s2,subst:sg:nom:m1,nazwisko,_]
+[0,1,arcy-Polak,arcy-Polak,ign,_,_]
+[0,1,Arcy-Polak,Arcy-polak,subst:sg:nom:m2,pospolita,pot.|środ.
+ 0,1,Arcy-Polak,Arcy-Polak:s1,subst:sg:nom:m1,pospolita,_
+ 0,1,Arcy-Polak,Arcy-Polak:s2,subst:sg:nom:m1,nazwisko,_]
+

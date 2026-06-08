@@ -1,0 +1,55 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+#define wsz_interp (interp|kropka|przecinek|dywiz)*
+
+#define moze_interp(segmenty) wsz_interp segmenty wsz_interp
+
+# Segmenty występujące samodzielnie:
+#
+# domyślny typ segmentu samodzielnego:
+moze_interp(samodz)
+
+# Pojedyncze znaki interpunkcyjne
+moze_interp(interp|kropka|przecinek|dywiz)
+
+# Liczba zapisana jako ciąg cyfr:
+moze_interp( dig>* dig )
+
+# np. nisko-kwasowy
+moze_interp( adja dywiz adj )
+moze_interp( adja> adj )
+
+[segment types]
+interp
+kropka
+przecinek
+dywiz
+dig
+adja
+adj
+samodz
+
+[lexemes]
+kropka	.	interp
+przecinek	,	interp
+dywiz	-	interp
+
+[tags]
+dig	dig
+interp	interp
+adja	adja
+adj	adj:%
+samodz	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

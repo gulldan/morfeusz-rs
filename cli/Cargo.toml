@@ -1,0 +1,31 @@
+[package]
+name = "morfeusz-cli"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license-file.workspace = true
+readme.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+itoa = "1.0"
+# Binary-only fast allocator. The core `morfeusz-rs` library stays dependency
+# free; the application binary picks the allocator. mimalloc dramatically cuts
+# the cost of the analyzer's many short-lived per-word / per-interpretation
+# allocations and scales far better than the system allocator across threads
+# (which matters for the free-threaded Python binding).
+mimalloc = { version = "0.1.52", default-features = false }
+morfeusz-rs = { path = "../morfeusz-rs" }
+# Work-stealing thread pool for the opt-in `--threads` parallel mode. Lines are
+# independent under SEPARATE numbering, so analysis fans out across cores while
+# output is reassembled in input order — byte-identical to the serial path.
+rayon = "1"
+
+[[bin]]
+name = "morfeusz_analyzer"
+path = "src/bin/morfeusz_analyzer.rs"
+
+[[bin]]
+name = "morfeusz_generator"
+path = "src/bin/morfeusz_generator.rs"

@@ -1,0 +1,36 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+
+winien interp*
+winien aglt interp*
+subst interp*
+interp
+
+[segment types]
+subst
+winien
+aglt
+interp
+everything
+
+[lexemes]
+
+[tags]
+subst	subst:%
+winien	winien:%
+aglt	aglt:%
+interp	interp
+everything	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

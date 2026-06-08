@@ -1,0 +1,8 @@
+[nisko,niski,adja,_,_]
+[nisko,nisko,ign,_,_]
+[-,-,interp,_,_]
+[kwasowego,kwasowy,adj:sg:acc:m3:pos,_,_]
+[nisko-kwasowy,nisko-kwasowy,ign,_,_]
+[niski-kwasowy,niski-kwasowy,ign,_,_]
+[niskokwasowego,niskokwasowy,adj:sg:acc:m3:pos,_,_]
+

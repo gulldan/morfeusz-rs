@@ -1,0 +1,5 @@
+[0,1,czerwony,czerwony:a1,adj:sg:acc:m3:pos,pospolita,niebieski
+ 0,1,czerwony,czerwony:a2,adj:sg:acc:m3:pos,pospolita,żółty1|żółty2
+ 0,1,czerwony,czerwony:a3,adj:sg:acc:m3:pos,pospolita,żółty1|żółty2
+ 0,1,czerwony,czerwony:a4,adj:sg:acc:m3:pos,pospolita,żółty1|żółty2|żółty3]
+

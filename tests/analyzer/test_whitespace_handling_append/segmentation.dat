@@ -1,0 +1,25 @@
+[options]
+aggl=strict permissive isolated
+praet=split composite
+
+[combinations]
+
+samodzielnie
+
+[segment types]
+samodzielnie
+
+[lexemes]
+
+[tags]
+samodzielnie	%
+
+[separator chars]
+# ,
+44
+
+# .
+46
+
+# ;
+59

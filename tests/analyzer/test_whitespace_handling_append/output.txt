@@ -1,0 +1,8 @@
+[0,1,kot  ,kot,subst:sg:nom:m1,_,_]
+[1,2,pies ,pies,ign,_,_]
+[2,3,kot  ,kot,subst:sg:nom:m1,_,_]
+[0,1,kot ,kot,subst:sg:nom:m1,_,_]
+[1,2,pies  ,pies,ign,_,_]
+[0,1,pies  ,pies,ign,_,_]
+[1,2,kot,kot,subst:sg:nom:m1,_,_]
+

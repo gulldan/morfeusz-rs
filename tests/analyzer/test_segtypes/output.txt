@@ -1,0 +1,11 @@
+[0,1,kot,kot,subst:sg:nom:m1,_,samodzielnie|zzz
+ 0,1,kot,kot,subst:sg:nom:m2,imie,samodzielnie]
+[0,1,eurokot,eurokot,subst:sg:nom:m1,nazwisko,euro]
+[0,1,superkot,superkot,subst:sg:nom:m1,_,super|xxx|yyy]
+[0,1,mikrokot,mikrokot,subst:sg:nom:m1,imie,mikro|zzz]
+[0,1,kotkot,kotkot,ign,_,_]
+[0,1,pies,pies,subst:sg:nom:m1,nazwisko,samodzielnie|yyy|zzz]
+[0,1,europies,europies,subst:sg:acc:m3,_,aaa|zzz|euro]
+[0,1,superpies,superpies,ign,_,_]
+[0,1,mikropies,mikropies,ign,_,_]
+

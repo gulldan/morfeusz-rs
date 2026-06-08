@@ -1,0 +1,16 @@
+[workspace]
+members = ["morfeusz-rs", "python", "service", "capi", "cli", "builder"]
+resolver = "2"
+
+[workspace.package]
+version = "1.99.15"
+edition = "2021"
+description = "Rust port of the Morfeusz morphological analyzer and generator"
+license-file = "License.txt"
+readme = "README.md"
+repository = "https://github.com/sgjp/morfeusz"
+homepage = "https://morfeusz.sgjp.pl"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

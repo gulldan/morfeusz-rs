@@ -1,0 +1,45 @@
+[package]
+name = "morfeusz2-py"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license-file.workspace = true
+readme = "README.md"
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+name = "morfeusz2_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+morfeusz-rs = { path = "../morfeusz-rs" }
+# Work-stealing pool for the batch `analyse_many()` API: each worker forks its
+# own analyzer (shared dict, private decode cache) and runs with the GIL
+# released, giving Python callers the CLI's multi-core throughput.
+rayon = "1"
+# abi3-py39: build a single forward-compatible wheel against the Python 3.9+
+# stable ABI. On free-threaded (no-GIL) interpreters pyo3 automatically ignores
+# abi3 (the stable ABI is not yet available there) and builds a
+# version-specific module, so the same crate covers both regular and
+# free-threaded CPython 3.14.
+pyo3 = { version = "0.28", features = ["extension-module", "abi3-py39"] }
+
+# Fast allocator for the Rust analysis allocations inside the extension module.
+# Registered as this cdylib's global allocator; Python's own allocations are
+# unaffected. Scales much better than the system allocator on free-threaded
+# (no-GIL) interpreters where analysis runs concurrently across threads.
+#
+# This module is dlopen'd into the Python process. On Linux that means the
+# default (initial-exec) TLS model an allocator uses can exhaust the static TLS
+# block and crash at load ("cannot allocate memory in static TLS block"), so the
+# Linux build uses the local-dynamic TLS model. macOS/Windows don't have this
+# limitation and keep the slightly faster default TLS.
+[target.'cfg(target_os = "linux")'.dependencies]
+mimalloc = { version = "0.1.52", default-features = false, features = ["local_dynamic_tls"] }
+
+[target.'cfg(not(target_os = "linux"))'.dependencies]
+mimalloc = { version = "0.1.52", default-features = false }
+
+[build-dependencies]
+pyo3-build-config = "0.28"
