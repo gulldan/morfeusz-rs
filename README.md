@@ -134,6 +134,46 @@ python3 morfeusz-rs/tests/diff_corpus/full_compare.py       # the tables above (
        morfeusz-rs/tests/diff_corpus/py_parallel_check.py   # analyse_many() correctness + speedup
 ```
 
+## Python wheel
+
+The `morfeusz2` extension (crate `python/`) is built with
+[maturin](https://www.maturin.rs/). One forward-compatible **abi3** wheel covers
+CPython 3.9+; free-threaded interpreters get their own version-specific wheel
+automatically.
+
+```sh
+pip install maturin
+
+# Build a release wheel  ->  target/wheels/morfeusz2-*.whl
+maturin build --release -m python/Cargo.toml
+pip install target/wheels/morfeusz2-*.whl
+
+# ...or develop-install (editable) into the ACTIVE virtualenv
+cd python && maturin develop --release
+```
+
+Since `python/pyproject.toml` declares maturin as the build backend, plain
+PEP 517 works too: `pip install ./python` (or `pip wheel ./python`).
+
+**Free-threaded (no-GIL) CPython 3.14t** — build against the free-threaded
+interpreter and maturin emits a version-specific `cp314t` wheel (abi3 is
+auto-disabled there), which enables the parallel object-building path in
+`analyse_many`:
+
+```sh
+python3.14t -m venv .venv-ft && . .venv-ft/bin/activate
+pip install maturin
+maturin build --release -m python/Cargo.toml   # -> ...-cp314-cp314t-*.whl
+```
+
+Smoke test the installed module:
+
+```python
+import morfeusz2
+m = morfeusz2.Morfeusz(dict_name="sgjp", dict_path="/path/to/sgjp-dict-dir")
+print(m.analyse("Ala ma kota"))
+```
+
 ## Further optimization ideas
 
 Per *single-call* analysis the code is near its algorithmic ceiling (~50% of
