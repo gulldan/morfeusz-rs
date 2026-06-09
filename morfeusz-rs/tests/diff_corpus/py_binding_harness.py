@@ -8,7 +8,13 @@ Modes:
   api              -> print the exposed API surface (classes/callables)
 """
 import sys, time
-import morfeusz2
+
+# A/B harness: an explicit `morfeusz2` (official C++ ref, or one aliased onto
+# sys.path) wins; otherwise fall back to this project's renamed Rust module.
+try:
+    import morfeusz2
+except ImportError:
+    import morfeusz2_rs as morfeusz2
 
 DICT = dict(dict_name="sgjp", dict_path="/tmp/bench")
 

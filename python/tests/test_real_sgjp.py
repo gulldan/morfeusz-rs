@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-import morfeusz2
+import morfeusz2_rs as morfeusz2  # drop-in: same API under the renamed module
 
 
 REAL_SGJP = Path("/tmp/morfeusz-sgjp-20260601")

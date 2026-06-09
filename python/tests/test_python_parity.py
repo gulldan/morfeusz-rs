@@ -1,4 +1,4 @@
-import morfeusz2
+import morfeusz2_rs as morfeusz2  # drop-in: same API under the renamed module
 import pytest
 import shutil
 from importlib import metadata
@@ -22,20 +22,23 @@ def default_dictionary_search_path(tmp_path):
 
 
 def test_module_metadata_matches_python_wrapper_surface():
-    package_metadata = metadata.metadata("morfeusz2")
+    package_metadata = metadata.metadata("morfeusz2-rs")
 
     assert morfeusz2.__version__ == morfeusz2.Morfeusz.getVersion()
     assert morfeusz2.__version__ == "1.99.15"
-    assert metadata.version("morfeusz2") == morfeusz2.__version__
-    assert package_metadata["Name"] == "morfeusz2"
+    assert metadata.version("morfeusz2-rs") == morfeusz2.__version__
+    assert package_metadata["Name"] == "morfeusz2-rs"
     assert package_metadata["Version"] == morfeusz2.__version__
-    assert package_metadata["Summary"] == "Python bindings for Morfeusz 2"
+    assert (
+        package_metadata["Summary"]
+        == "Drop-in Rust/PyO3 replacement for Morfeusz 2 (imports as morfeusz2_rs)"
+    )
     assert package_metadata["Requires-Python"] == ">=3.9"
     assert "Programming Language :: Rust" in package_metadata.get_all("Classifier")
     assert "Homepage, https://morfeusz.sgjp.pl" in package_metadata.get_all(
         "Project-URL"
     )
-    assert "Repository, https://github.com/sgjp/morfeusz" in package_metadata.get_all(
+    assert "Repository, https://github.com/gulldan/morfeusz-rs" in package_metadata.get_all(
         "Project-URL"
     )
     assert morfeusz2._Morfeusz is not morfeusz2.Morfeusz

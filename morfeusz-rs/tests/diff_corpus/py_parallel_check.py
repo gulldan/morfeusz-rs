@@ -13,7 +13,12 @@ Run with the Rust binding on sys.path:
 import sys, time
 from concurrent.futures import ThreadPoolExecutor
 
-import morfeusz2
+# This check exercises Rust-only features (GIL-release, analyse_many), so prefer
+# this project's renamed module; fall back to anything installed as `morfeusz2`.
+try:
+    import morfeusz2_rs as morfeusz2
+except ImportError:
+    import morfeusz2
 
 corpus = sys.argv[1] if len(sys.argv) > 1 else "/tmp/bench/msmarco.txt"
 n = int(sys.argv[2]) if len(sys.argv) > 2 else 200_000

@@ -1443,7 +1443,7 @@ fn morfeusz_usage_from_i32(value: i32) -> PyResult<MorfeuszUsage> {
 // `#[pyclass]` mutability is guarded by pyo3's runtime borrow checking, which
 // remains in force without the GIL.
 #[pymodule(gil_used = false)]
-fn morfeusz2(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn morfeusz2_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyMorphInterpretation>()?;
     m.add_class::<PyResultsIterator>()?;
     m.add_class::<PyLowMorfeusz>()?;

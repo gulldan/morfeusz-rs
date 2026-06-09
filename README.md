@@ -92,18 +92,43 @@ per core and also leaner.
 | corpus  | stack               | time   | lines/s | peak RSS |
 |---------|---------------------|--------|---------|----------|
 | msmarco | C++ `_morfeusz2` SWIG | 71.63s | 2,792 | 276.5 MB |
-|         | Rust `morfeusz2` PyO3 | 35.60s | 5,619 | 201.4 MB |
+|         | Rust `morfeusz2_rs` PyO3 | 35.60s | 5,619 | 201.4 MB |
 | c4pl    | C++ SWIG            | 35.79s | 5,589   | 213.8 MB |
 |         | Rust PyO3           | 17.54s | 11,403  | 162.0 MB |
 | wiki_pl | C++ SWIG            | 32.45s | 6,164   | 160.0 MB |
 |         | Rust PyO3           | 16.34s | 12,242  | 122.5 MB |
 
-The Rust `morfeusz2` module is a **drop-in API replacement** (same
+The Rust `morfeusz2_rs` module is a **drop-in API replacement** (same
 `Morfeusz(...).analyse()` tuples, generator, DAG/tag expansion, low-level
 `_Morfeusz`, `MorphInterpretation`, `IdResolver`, `ResultsIterator`), builds an
 abi3 wheel via `maturin`, supports free-threaded (no-GIL) CPython 3.14, and runs
 **~2× faster at ~0.73–0.77× the memory** of the C++/SWIG binding — identical
 output.
+
+### Drop-in replacement for the official `morfeusz2`
+
+To avoid clobbering the upstream SGJP binding, this package installs under a
+**different name** and therefore coexists with it — installing one does not
+overwrite the other:
+
+| | official | this project |
+|---|---|---|
+| PyPI / wheel name | `morfeusz2` | **`morfeusz2-rs`** |
+| import name | `morfeusz2` | **`morfeusz2_rs`** |
+
+The public API is identical, so you swap it in by **aliasing the import** and
+leaving the rest of your code untouched:
+
+```python
+import morfeusz2_rs as morfeusz2          # the one line you change
+
+m = morfeusz2.Morfeusz(dict_name="sgjp", dict_path="/path/to/sgjp-dict-dir")
+print(m.analyse("Ala ma kota"))           # everything below is unchanged
+```
+
+To force it project-wide without touching each file, alias it once at startup
+(e.g. `import sys, morfeusz2_rs; sys.modules["morfeusz2"] = morfeusz2_rs`) so that
+existing `import morfeusz2` statements resolve to the Rust module.
 
 `analyse()` releases the GIL during the (pure-Rust) analysis, so multiple Python
 threads — each with its own `Morfeusz` — run concurrently. For batch work,
@@ -136,7 +161,12 @@ python3 morfeusz-rs/tests/diff_corpus/full_compare.py       # the tables above (
 
 ## Python wheel
 
-The `morfeusz2` extension (crate `python/`) is built with
+Prebuilt wheels for Linux (x86_64/aarch64), macOS (Intel/Apple Silicon) and
+Windows are attached to every
+[GitHub Release](https://github.com/gulldan/morfeusz-rs/releases) — download the
+one for your platform and `pip install` it. To build it yourself:
+
+The `morfeusz2_rs` extension (crate `python/`) is built with
 [maturin](https://www.maturin.rs/). One forward-compatible **abi3** wheel covers
 CPython 3.9+; free-threaded interpreters get their own version-specific wheel
 automatically.
@@ -144,9 +174,9 @@ automatically.
 ```sh
 pip install maturin
 
-# Build a release wheel  ->  target/wheels/morfeusz2-*.whl
+# Build a release wheel  ->  target/wheels/morfeusz2_rs-*.whl
 maturin build --release -m python/Cargo.toml
-pip install target/wheels/morfeusz2-*.whl
+pip install target/wheels/morfeusz2_rs-*.whl
 
 # ...or develop-install (editable) into the ACTIVE virtualenv
 cd python && maturin develop --release
@@ -169,7 +199,7 @@ maturin build --release -m python/Cargo.toml   # -> ...-cp314-cp314t-*.whl
 Smoke test the installed module:
 
 ```python
-import morfeusz2
+import morfeusz2_rs as morfeusz2
 m = morfeusz2.Morfeusz(dict_name="sgjp", dict_path="/path/to/sgjp-dict-dir")
 print(m.analyse("Ala ma kota"))
 ```
