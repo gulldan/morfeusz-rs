@@ -1,0 +1,160 @@
+name: Release
+
+# Builds the `morfeusz2` extension (crate `python/`) as wheels for every major
+# platform and attaches them to a GitHub Release. Triggered by pushing a version
+# tag (e.g. `v1.99.15`); `workflow_dispatch` builds the wheels without releasing
+# so they can be downloaded from the run's artifacts.
+#
+# One forward-compatible abi3 wheel per platform covers CPython 3.9+. Free-
+# threaded (no-GIL) interpreters get their own version-specific wheel
+# automatically when built against a `3.14t` interpreter; testers on 3.14t can
+# also build from the bundled sdist.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            target: x86_64
+          - runner: ubuntu-22.04
+            target: aarch64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          # `-m python/Cargo.toml` builds the workspace's python crate; maturin
+          # reads python/pyproject.toml ([tool.maturin] module-name=morfeusz2).
+          args: --release --out dist --manifest-path python/Cargo.toml
+          manylinux: auto
+          sccache: 'true'
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-linux-${{ matrix.platform.target }}
+          path: dist
+
+  macos:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: macos-13      # Intel
+            target: x86_64
+          - runner: macos-14      # Apple Silicon
+            target: aarch64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist --manifest-path python/Cargo.toml
+          sccache: 'true'
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macos-${{ matrix.platform.target }}
+          path: dist
+
+  windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - target: x64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          architecture: ${{ matrix.platform.target }}
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist --manifest-path python/Cargo.toml
+          sccache: 'true'
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-windows-${{ matrix.platform.target }}
+          path: dist
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist --manifest-path python/Cargo.toml
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: dist
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    # Run even if some build legs fail so the release still gets the wheels that
+    # did build; only publish for tag pushes (workflow_dispatch just builds).
+    if: always() && startsWith(github.ref, 'refs/tags/')
+    needs: [linux, macos, windows, sdist]
+    permissions:
+      contents: write
+    steps:
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+      - name: Publish to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          prerelease: true
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+          body: |
+            Test wheels for **morfeusz2** — the Rust/PyO3 port of Morfeusz 2.
+
+            abi3 wheels cover CPython **3.9+**; free-threaded (3.14t) testers can
+            build from the bundled sdist (`pip install morfeusz2-*.tar.gz`).
+
+            Install the wheel for your platform, e.g.:
+
+            ```sh
+            pip install https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/<wheel-file>
+            ```
+
+            Smoke test (needs an SGJP dictionary directory):
+
+            ```python
+            import morfeusz2
+            m = morfeusz2.Morfeusz(dict_name="sgjp", dict_path="/path/to/sgjp-dict-dir")
+            print(m.analyse("Ala ma kota"))
+            ```
