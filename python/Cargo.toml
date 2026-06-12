@@ -23,7 +23,7 @@ rayon = "1"
 # abi3 (the stable ABI is not yet available there) and builds a
 # version-specific module, so the same crate covers both regular and
 # free-threaded CPython 3.14.
-pyo3 = { version = "0.28", features = ["extension-module", "abi3-py39"] }
+pyo3 = { version = "0.29", features = ["extension-module", "abi3-py39"] }
 
 # Fast allocator for the Rust analysis allocations inside the extension module.
 # Registered as this cdylib's global allocator; Python's own allocations are
