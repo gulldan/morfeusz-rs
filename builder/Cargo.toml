@@ -11,3 +11,6 @@ homepage.workspace = true
 [lib]
 name = "morfeusz_builder"
 path = "src/lib.rs"
+
+[lints]
+workspace = true

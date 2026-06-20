@@ -1,15 +1,10 @@
 use crate::{CaseHandling, Charset, Error, Result, TokenNumbering, WhitespaceHandling};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum NumberingScope {
+    #[default]
     Separate,
     Continuous,
-}
-
-impl Default for NumberingScope {
-    fn default() -> Self {
-        Self::Separate
-    }
 }
 
 impl From<TokenNumbering> for NumberingScope {
@@ -94,7 +89,7 @@ impl SegmentationPreset {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Config {
     charset: Charset,
     case_handling: CaseHandling,
@@ -102,19 +97,6 @@ pub struct Config {
     whitespace: WhitespaceHandling,
     segmentation: SegmentationPreset,
     debug: bool,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            charset: Charset::default(),
-            case_handling: CaseHandling::default(),
-            numbering: NumberingScope::default(),
-            whitespace: WhitespaceHandling::default(),
-            segmentation: SegmentationPreset::default(),
-            debug: false,
-        }
-    }
 }
 
 impl Config {

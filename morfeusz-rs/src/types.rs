@@ -3,8 +3,9 @@ use std::collections::BTreeSet;
 use crate::IdResolver;
 
 #[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum Charset {
+    #[default]
     Utf8 = 11,
     Iso8859_2 = 12,
     Cp1250 = 13,
@@ -16,15 +17,10 @@ pub const ISO8859_2: Charset = Charset::Iso8859_2;
 pub const CP1250: Charset = Charset::Cp1250;
 pub const CP852: Charset = Charset::Cp852;
 
-impl Default for Charset {
-    fn default() -> Self {
-        Self::Utf8
-    }
-}
-
 #[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum CaseHandling {
+    #[default]
     ConditionallyCaseSensitive = 100,
     StrictlyCaseSensitive = 101,
     IgnoreCase = 102,
@@ -34,15 +30,10 @@ pub const CONDITIONALLY_CASE_SENSITIVE: CaseHandling = CaseHandling::Conditional
 pub const STRICTLY_CASE_SENSITIVE: CaseHandling = CaseHandling::StrictlyCaseSensitive;
 pub const IGNORE_CASE: CaseHandling = CaseHandling::IgnoreCase;
 
-impl Default for CaseHandling {
-    fn default() -> Self {
-        Self::ConditionallyCaseSensitive
-    }
-}
-
 #[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum TokenNumbering {
+    #[default]
     Separate = 201,
     Continuous = 202,
 }
@@ -50,15 +41,10 @@ pub enum TokenNumbering {
 pub const SEPARATE_NUMBERING: TokenNumbering = TokenNumbering::Separate;
 pub const CONTINUOUS_NUMBERING: TokenNumbering = TokenNumbering::Continuous;
 
-impl Default for TokenNumbering {
-    fn default() -> Self {
-        Self::Separate
-    }
-}
-
 #[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum WhitespaceHandling {
+    #[default]
     Skip = 301,
     Append = 302,
     Keep = 303,
@@ -68,17 +54,12 @@ pub const SKIP_WHITESPACES: WhitespaceHandling = WhitespaceHandling::Skip;
 pub const APPEND_WHITESPACES: WhitespaceHandling = WhitespaceHandling::Append;
 pub const KEEP_WHITESPACES: WhitespaceHandling = WhitespaceHandling::Keep;
 
-impl Default for WhitespaceHandling {
-    fn default() -> Self {
-        Self::Skip
-    }
-}
-
 #[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum MorfeuszUsage {
     AnalyseOnly = 401,
     GenerateOnly = 402,
+    #[default]
     BothAnalyseAndGenerate = 403,
 }
 
@@ -86,13 +67,7 @@ pub const ANALYSE_ONLY: MorfeuszUsage = MorfeuszUsage::AnalyseOnly;
 pub const GENERATE_ONLY: MorfeuszUsage = MorfeuszUsage::GenerateOnly;
 pub const BOTH_ANALYSE_AND_GENERATE: MorfeuszUsage = MorfeuszUsage::BothAnalyseAndGenerate;
 
-impl Default for MorfeuszUsage {
-    fn default() -> Self {
-        Self::BothAnalyseAndGenerate
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct MorphInterpretation {
     pub start_node: i32,
     pub end_node: i32,
@@ -101,20 +76,6 @@ pub struct MorphInterpretation {
     pub tag_id: i32,
     pub name_id: i32,
     pub labels_id: i32,
-}
-
-impl Default for MorphInterpretation {
-    fn default() -> Self {
-        Self {
-            start_node: 0,
-            end_node: 0,
-            orth: String::new(),
-            lemma: String::new(),
-            tag_id: 0,
-            name_id: 0,
-            labels_id: 0,
-        }
-    }
 }
 
 impl MorphInterpretation {

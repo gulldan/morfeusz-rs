@@ -29,3 +29,6 @@ path = "src/bin/morfeusz_analyzer.rs"
 [[bin]]
 name = "morfeusz_generator"
 path = "src/bin/morfeusz_generator.rs"
+
+[lints]
+workspace = true

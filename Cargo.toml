@@ -11,6 +11,17 @@ readme = "README.md"
 repository = "https://github.com/sgjp/morfeusz"
 homepage = "https://morfeusz.sgjp.pl"
 
+[workspace.lints.rust]
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+dbg_macro = "deny"
+todo = "deny"
+unimplemented = "deny"
+too_many_arguments = "allow"
+missing_safety_doc = "allow"
+
 [profile.release]
 lto = "thin"
 codegen-units = 1

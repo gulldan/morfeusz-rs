@@ -15,3 +15,6 @@ name = "morfeusz"
 
 [dev-dependencies]
 morfeusz-builder = { path = "../builder" }
+
+[lints]
+workspace = true

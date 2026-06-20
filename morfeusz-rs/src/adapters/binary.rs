@@ -448,7 +448,7 @@ impl BinaryCasePattern {
                 let mut chars = orth.chars();
                 let mut current = 0usize;
                 for &raw_index in indices {
-                    let wanted = raw_index as usize;
+                    let wanted = raw_index;
                     while current < wanted {
                         let Some(_) = chars.next() else {
                             return false;
@@ -1124,7 +1124,7 @@ impl Lexicon for BinaryAnalyzerLexicon {
     }
 
     fn resolver(&self) -> &IdResolver {
-        &*self.resolver
+        &self.resolver
     }
 
     fn lookup(&self, _orth: &str) -> Option<&[DictionaryEntry]> {
@@ -1246,7 +1246,7 @@ impl Lexicon for BinaryLexicon {
     }
 
     fn resolver(&self) -> &IdResolver {
-        &*self.resolver
+        &self.resolver
     }
 
     fn lookup(&self, _orth: &str) -> Option<&[DictionaryEntry]> {
@@ -1388,7 +1388,7 @@ impl Lexicon for BinaryGeneratorLexicon {
     }
 
     fn resolver(&self) -> &IdResolver {
-        &*self.resolver
+        &self.resolver
     }
 
     fn lookup(&self, _orth: &str) -> Option<&[DictionaryEntry]> {
@@ -1907,9 +1907,7 @@ impl<'a> VLength1Fsa<'a> {
     fn try_recognize_loaded(&self, input: &[u8]) -> Option<RawFsaMatch<'a>> {
         let mut state = self.state_at_loaded(V1_INITIAL_STATE_OFFSET);
         for &byte in input {
-            let Some(next_state) = self.proceed_loaded(byte, state) else {
-                return None;
-            };
+            let next_state = self.proceed_loaded(byte, state)?;
             state = next_state;
         }
 
@@ -3598,7 +3596,7 @@ impl<'a> InflexionGraph<'a> {
             let mut i = 0;
             while i < self.graph[node].len() {
                 if self.graph[node][i].next_node == from_node {
-                    let mut redirected = self.graph[node][i].clone();
+                    let mut redirected = self.graph[node][i];
                     redirected.next_node = to_node;
                     if edge_in(&self.graph[node], &redirected) {
                         self.graph[node].remove(i);
@@ -3741,7 +3739,7 @@ fn push_plain_generator_interpretations(
         if !generator_homonym_matches(interp, required_homonym_id) {
             continue;
         }
-        result.push(interp.to_morph_interpretation(&chunk.lemma, 0, 0)?);
+        result.push(interp.to_morph_interpretation(chunk.lemma, 0, 0)?);
     }
     Ok(())
 }
@@ -3762,7 +3760,7 @@ fn push_shifted_generator_interpretations(
         if !generator_homonym_matches(interp, required_homonym_id) {
             continue;
         }
-        let mut morph = interp.to_morph_interpretation(&current.lemma, 0, 0)?;
+        let mut morph = interp.to_morph_interpretation(current.lemma, 0, 0)?;
         morph.orth = format!("{orth_prefix}{}", morph.orth);
         morph.lemma = if interp.homonym_id.is_empty() {
             lemma.clone()
@@ -3800,7 +3798,7 @@ fn push_plain_chunk_interpretations(
 ) -> Result<()> {
     let orth_context = AnalyzerOrthContext::new(chunk.orth);
     for_each_case_compatible_interpretation(
-        &chunk.orth,
+        chunk.orth,
         decode_cache.interpretations(chunk.interpretations),
         case_handling,
         |interp| {
@@ -3830,14 +3828,14 @@ fn push_shifted_chunk_interpretations(
     let mut lemma_prefix = String::new();
     for prefix in prefixes {
         let Some(prefix_interp) = first_case_compatible_interpretation(
-            &prefix.orth,
+            prefix.orth,
             decode_cache.interpretations(prefix.interpretations),
             case_handling,
         ) else {
             return Ok(());
         };
         lemma_prefix.push_str(&decode_analyzer_prefix_lemma_for_form(
-            &prefix.orth,
+            prefix.orth,
             &prefix_interp.form,
         )?);
     }
@@ -3846,7 +3844,7 @@ fn push_shifted_chunk_interpretations(
     let orth_context = AnalyzerOrthContext::new(&orth);
     let prefix_codepoints = orth_context.original_codepoints_len - current_codepoints;
     for_each_case_compatible_interpretation(
-        &current.orth,
+        current.orth,
         decode_cache.interpretations(current.interpretations),
         case_handling,
         |interp| {

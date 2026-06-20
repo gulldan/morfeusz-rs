@@ -14,3 +14,6 @@ crate-type = ["cdylib", "staticlib", "rlib"]
 
 [dependencies]
 morfeusz-rs = { path = "../morfeusz-rs" }
+
+[lints]
+workspace = true
