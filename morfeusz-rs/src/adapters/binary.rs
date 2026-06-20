@@ -42,6 +42,10 @@ const SEGRULES_WEAK_FLAG: u8 = 2;
 const SEGRULES_TRANSITION_SIZE: usize = 4;
 const ANALYZER_DECODE_CACHE_MAX_GROUPS: usize = 32 * 1024;
 const GENERATOR_DECODE_CACHE_MAX_GROUPS: usize = 4 * 1024;
+const WORD_TEMPLATE_CACHE_MAX_WORDS: usize = 20 * 1024;
+const WORD_TEMPLATE_SEEN_ONCE_SLOTS: usize = 64 * 1024;
+const WORD_TEMPLATE_MAX_WORD_BYTES: usize = 64;
+const WORD_TEMPLATE_MAX_INTERPRETATIONS: usize = 32;
 type InterpsGroupId = (usize, usize);
 type AnalyzerDecodeCacheMap = HashMap<
     InterpsGroupId,
@@ -580,6 +584,7 @@ pub struct BinaryAnalyzerLexicon {
     segmentation_metadata: SegmentationMetadata,
     default_segmentation_variant_index: Option<usize>,
     analyzer_decode_cache: SharedAnalyzerGroupDecodeCache,
+    word_template_cache: SharedWordTemplateCache,
 }
 
 #[derive(Debug, Clone)]
@@ -621,6 +626,7 @@ impl BinaryAnalyzerLexicon {
             segmentation_metadata,
             default_segmentation_variant_index,
             analyzer_decode_cache: SharedAnalyzerGroupDecodeCache::default(),
+            word_template_cache: SharedWordTemplateCache::default(),
         })
     }
 
@@ -628,7 +634,10 @@ impl BinaryAnalyzerLexicon {
         &self,
         orth: &str,
     ) -> Result<Option<Vec<EncodedAnalyzerInterpsGroup>>> {
-        let lookup: String = orth.chars().map(crate::case_tables::to_lower_char).collect();
+        let lookup: String = orth
+            .chars()
+            .map(crate::case_tables::to_lower_char)
+            .collect();
         let Some(raw_match) = self
             .data
             .fsa_unchecked()
@@ -739,21 +748,33 @@ impl BinaryAnalyzerLexicon {
             return Ok((Vec::new(), start_node));
         }
 
-        match self.word_paths(word, segmentation)? {
+        let cache_key = (!inside_ign_handler)
+            .then(|| self.word_template_cache_key(word, case_handling, segmentation))
+            .flatten();
+        if let Some(key) = cache_key {
+            if let Some(cached) = self.word_template_cache.get(word, key, start_node)? {
+                return Ok(cached);
+            }
+        }
+
+        let result = match self.word_paths(word, segmentation)? {
             // Real builder dictionaries expose a segmentation FSA.
             Some(word_paths) if !word_paths.paths.is_empty() => {
                 let BinaryAnalyzerWordPaths {
                     paths,
                     decode_cache,
                 } = word_paths;
-                if let Some((interps, nodes)) =
-                    paths_to_morph_interpretations(paths, &decode_cache, start_node, case_handling)?
-                {
-                    return Ok((interps, start_node + nodes));
+                match paths_to_morph_interpretations(
+                    paths,
+                    &decode_cache,
+                    start_node,
+                    case_handling,
+                )? {
+                    Some((interps, nodes)) => Ok((interps, start_node + nodes)),
+                    // Graph existed but decoded to nothing (e.g. case-filtered):
+                    // C++ appends a single ignotium for the whole word.
+                    None => Ok((vec![ignotium(word, start_node)], start_node + 1)),
                 }
-                // Graph existed but decoded to nothing (e.g. case-filtered):
-                // C++ appends a single ignotium for the whole word.
-                Ok((vec![ignotium(word, start_node)], start_node + 1))
             }
             // Segmentation FSA present but no accepting path: unknown word. C++
             // splits it on dictionary separators and re-analyzes each part,
@@ -766,7 +787,46 @@ impl BinaryAnalyzerLexicon {
                 Some(interps) => Ok((interps, start_node + 1)),
                 None => Ok((vec![ignotium(word, start_node)], start_node + 1)),
             },
+        };
+
+        if let (Some(key), Ok((interps, next_node))) = (cache_key, result.as_ref()) {
+            self.word_template_cache
+                .insert_if_admitted(word, key, interps, start_node, *next_node)?;
         }
+
+        result
+    }
+
+    fn word_template_cache_key(
+        &self,
+        word: &str,
+        case_handling: CaseHandling,
+        segmentation: &SegmentationPreset,
+    ) -> Option<WordTemplateCacheKey> {
+        let case_code = match case_handling {
+            CaseHandling::ConditionallyCaseSensitive => 0_u16,
+            CaseHandling::StrictlyCaseSensitive => 1,
+            CaseHandling::IgnoreCase => 2,
+        };
+        let aggl = segmentation.aggl().or_else(|| {
+            self.segmentation_metadata
+                .default_options
+                .get("aggl")
+                .map(String::as_str)
+        });
+        let praet = segmentation.praet().or_else(|| {
+            self.segmentation_metadata
+                .default_options
+                .get("praet")
+                .map(String::as_str)
+        });
+        let aggl_code = option_code(aggl, &[("strict", 1), ("permissive", 2), ("isolated", 3)])?;
+        let praet_code = option_code(praet, &[("split", 1), ("composite", 2)])?;
+        let config_key = case_code | ((aggl_code as u16) << 2) | ((praet_code as u16) << 5);
+        Some(WordTemplateCacheKey {
+            hash: word_template_hash(word, config_key),
+            config_key,
+        })
     }
 
     /// Plain single-edge, case-aware lookup of a whole word. Used only when the
@@ -1051,6 +1111,7 @@ impl Lexicon for BinaryAnalyzerLexicon {
         // uncontended decode cache for this thread's copy.
         let mut forked = self.clone();
         forked.analyzer_decode_cache = SharedAnalyzerGroupDecodeCache::default();
+        forked.word_template_cache = SharedWordTemplateCache::default();
         Some(Arc::new(forked))
     }
 
@@ -1168,6 +1229,7 @@ impl Lexicon for BinaryLexicon {
         let mut forked = self.clone();
         if let Some(analyzer) = &mut forked.analyzer {
             analyzer.analyzer_decode_cache = SharedAnalyzerGroupDecodeCache::default();
+            analyzer.word_template_cache = SharedWordTemplateCache::default();
         }
         if let Some(generator) = &mut forked.generator {
             generator.generator_decode_cache = SharedGeneratorGroupDecodeCache::default();
@@ -2477,6 +2539,298 @@ impl<'a> BinaryAnalyzerWordPaths<'a> {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct WordTemplateCacheKey {
+    hash: u64,
+    config_key: u16,
+}
+
+#[derive(Debug, Clone)]
+enum OrthTemplate {
+    InputWord,
+    Owned(Box<str>),
+}
+
+#[derive(Debug, Clone)]
+struct MorphInterpretationTemplate {
+    rel_start_node: i32,
+    rel_end_node: i32,
+    orth: OrthTemplate,
+    lemma: Box<str>,
+    tag_id: i32,
+    name_id: i32,
+    labels_id: i32,
+}
+
+impl MorphInterpretationTemplate {
+    fn from_interpretation(
+        interp: &MorphInterpretation,
+        input_word: &str,
+        start_node: i32,
+    ) -> Self {
+        let orth = if interp.orth == input_word {
+            OrthTemplate::InputWord
+        } else {
+            OrthTemplate::Owned(interp.orth.clone().into_boxed_str())
+        };
+        Self {
+            rel_start_node: interp.start_node - start_node,
+            rel_end_node: interp.end_node - start_node,
+            orth,
+            lemma: interp.lemma.clone().into_boxed_str(),
+            tag_id: interp.tag_id,
+            name_id: interp.name_id,
+            labels_id: interp.labels_id,
+        }
+    }
+
+    fn instantiate(&self, input_word: &str, start_node: i32) -> MorphInterpretation {
+        MorphInterpretation {
+            start_node: start_node + self.rel_start_node,
+            end_node: start_node + self.rel_end_node,
+            orth: match &self.orth {
+                OrthTemplate::InputWord => input_word.to_owned(),
+                OrthTemplate::Owned(orth) => orth.to_string(),
+            },
+            lemma: self.lemma.to_string(),
+            tag_id: self.tag_id,
+            name_id: self.name_id,
+            labels_id: self.labels_id,
+        }
+    }
+}
+
+#[derive(Debug)]
+struct WordAnalysisTemplate {
+    hash: u64,
+    config_key: u16,
+    word: Box<str>,
+    next_node_delta: i32,
+    interps: Box<[MorphInterpretationTemplate]>,
+}
+
+impl WordAnalysisTemplate {
+    fn from_result(
+        word: &str,
+        key: WordTemplateCacheKey,
+        interps: &[MorphInterpretation],
+        start_node: i32,
+        next_node: i32,
+    ) -> Option<Self> {
+        Some(Self {
+            hash: key.hash,
+            config_key: key.config_key,
+            word: word.to_owned().into_boxed_str(),
+            next_node_delta: next_node.checked_sub(start_node)?,
+            interps: interps
+                .iter()
+                .map(|interp| {
+                    MorphInterpretationTemplate::from_interpretation(interp, word, start_node)
+                })
+                .collect::<Vec<_>>()
+                .into_boxed_slice(),
+        })
+    }
+
+    fn instantiate(&self, word: &str, start_node: i32) -> (Vec<MorphInterpretation>, i32) {
+        (
+            self.interps
+                .iter()
+                .map(|interp| interp.instantiate(word, start_node))
+                .collect(),
+            start_node + self.next_node_delta,
+        )
+    }
+}
+
+#[cfg(test)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+struct WordTemplateCacheStats {
+    lookups: u64,
+    hits: u64,
+    first_seen: u64,
+    second_seen: u64,
+    inserts: u64,
+    reject_len: u64,
+    reject_template_count: u64,
+    reject_admission: u64,
+    reject_full: u64,
+}
+
+#[derive(Debug)]
+struct WordTemplateCache {
+    buckets: HashMap<u64, Vec<WordAnalysisTemplate>>,
+    seen_once: Box<[u64]>,
+    entries: usize,
+    #[cfg(test)]
+    stats: WordTemplateCacheStats,
+}
+
+impl Default for WordTemplateCache {
+    fn default() -> Self {
+        Self {
+            buckets: HashMap::with_capacity(WORD_TEMPLATE_CACHE_MAX_WORDS),
+            seen_once: vec![0; WORD_TEMPLATE_SEEN_ONCE_SLOTS].into_boxed_slice(),
+            entries: 0,
+            #[cfg(test)]
+            stats: WordTemplateCacheStats::default(),
+        }
+    }
+}
+
+impl WordTemplateCache {
+    fn get(
+        &mut self,
+        word: &str,
+        key: WordTemplateCacheKey,
+        start_node: i32,
+    ) -> Option<(Vec<MorphInterpretation>, i32)> {
+        #[cfg(test)]
+        {
+            self.stats.lookups += 1;
+        }
+        let bucket = self.buckets.get_mut(&key.hash)?;
+        for entry in bucket {
+            if entry.hash == key.hash && entry.config_key == key.config_key && &*entry.word == word
+            {
+                #[cfg(test)]
+                {
+                    self.stats.hits += 1;
+                }
+                return Some(entry.instantiate(word, start_node));
+            }
+        }
+        None
+    }
+
+    fn insert_if_admitted(
+        &mut self,
+        word: &str,
+        key: WordTemplateCacheKey,
+        interps: &[MorphInterpretation],
+        start_node: i32,
+        next_node: i32,
+    ) {
+        if word.len() > WORD_TEMPLATE_MAX_WORD_BYTES {
+            #[cfg(test)]
+            {
+                self.stats.reject_len += 1;
+            }
+            return;
+        }
+        if interps.len() > WORD_TEMPLATE_MAX_INTERPRETATIONS {
+            #[cfg(test)]
+            {
+                self.stats.reject_template_count += 1;
+            }
+            return;
+        }
+        if !interps.iter().any(|interp| !interp.is_ign()) {
+            #[cfg(test)]
+            {
+                self.stats.reject_admission += 1;
+            }
+            return;
+        }
+        if !self.seen_again(key.hash) {
+            return;
+        }
+        if self.entries >= WORD_TEMPLATE_CACHE_MAX_WORDS {
+            #[cfg(test)]
+            {
+                self.stats.reject_full += 1;
+            }
+            return;
+        }
+        if self.buckets.get(&key.hash).is_some_and(|bucket| {
+            bucket
+                .iter()
+                .any(|entry| entry.config_key == key.config_key && &*entry.word == word)
+        }) {
+            return;
+        }
+        let Some(template) =
+            WordAnalysisTemplate::from_result(word, key, interps, start_node, next_node)
+        else {
+            return;
+        };
+        self.buckets.entry(key.hash).or_default().push(template);
+        self.entries += 1;
+        #[cfg(test)]
+        {
+            self.stats.inserts += 1;
+        }
+    }
+
+    fn seen_again(&mut self, fingerprint: u64) -> bool {
+        debug_assert!(self.seen_once.len().is_power_of_two());
+        let index = fingerprint as usize & (self.seen_once.len() - 1);
+        if self.seen_once[index] == fingerprint {
+            #[cfg(test)]
+            {
+                self.stats.second_seen += 1;
+            }
+            true
+        } else {
+            self.seen_once[index] = fingerprint;
+            #[cfg(test)]
+            {
+                self.stats.first_seen += 1;
+            }
+            false
+        }
+    }
+
+    #[cfg(test)]
+    fn stats(&self) -> WordTemplateCacheStats {
+        self.stats
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+struct SharedWordTemplateCache {
+    cache: Arc<Mutex<WordTemplateCache>>,
+}
+
+impl SharedWordTemplateCache {
+    fn get(
+        &self,
+        word: &str,
+        key: WordTemplateCacheKey,
+        start_node: i32,
+    ) -> Result<Option<(Vec<MorphInterpretation>, i32)>> {
+        Ok(self
+            .cache
+            .lock()
+            .map_err(|_| Error::invalid_dictionary("word template cache is poisoned"))?
+            .get(word, key, start_node))
+    }
+
+    fn insert_if_admitted(
+        &self,
+        word: &str,
+        key: WordTemplateCacheKey,
+        interps: &[MorphInterpretation],
+        start_node: i32,
+        next_node: i32,
+    ) -> Result<()> {
+        self.cache
+            .lock()
+            .map_err(|_| Error::invalid_dictionary("word template cache is poisoned"))?
+            .insert_if_admitted(word, key, interps, start_node, next_node);
+        Ok(())
+    }
+
+    #[cfg(test)]
+    fn stats(&self) -> Result<WordTemplateCacheStats> {
+        Ok(self
+            .cache
+            .lock()
+            .map_err(|_| Error::invalid_dictionary("word template cache is poisoned"))?
+            .stats())
+    }
+}
+
 #[derive(Debug, Clone, Default)]
 struct SharedAnalyzerGroupDecodeCache {
     groups: Arc<Mutex<AnalyzerDecodeCacheMap>>,
@@ -2803,6 +3157,32 @@ fn collect_segmented_generator_paths<'a>(
 /// A single `ign` interpretation spanning `[start_node, start_node + 1]`.
 fn ignotium(word: &str, start_node: i32) -> MorphInterpretation {
     MorphInterpretation::create_ign(start_node, start_node + 1, word, word)
+}
+
+fn option_code(value: Option<&str>, known: &[(&str, u8)]) -> Option<u8> {
+    match value {
+        None => Some(0),
+        Some(value) => known
+            .iter()
+            .find_map(|(candidate, code)| (*candidate == value).then_some(*code)),
+    }
+}
+
+fn word_template_hash(word: &str, config_key: u16) -> u64 {
+    let mut hash = 0xcbf2_9ce4_8422_2325u64;
+    for byte in word.as_bytes() {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(0x1000_0000_01b3);
+    }
+    for byte in config_key.to_le_bytes() {
+        hash ^= u64::from(byte);
+        hash = hash.wrapping_mul(0x1000_0000_01b3);
+    }
+    if hash == 0 {
+        1
+    } else {
+        hash
+    }
 }
 
 fn paths_to_morph_interpretations<'a>(
@@ -5599,6 +5979,164 @@ mod tests {
         assert_eq!(analyzed[0].labels_as_string(engine.resolver()), Some("a|b"));
         assert_eq!(analyzed[1].orth, "pies");
         assert_eq!(analyzed[1].tag(engine.resolver()), Some("ign"));
+    }
+
+    #[test]
+    fn word_template_cache_rebases_nodes_after_second_sighting() {
+        let lexicon =
+            BinaryAnalyzerLexicon::from_bytes(binary_analyzer_dictionary_bytes()).unwrap();
+        let segmentation = SegmentationPreset::default();
+
+        let first = lexicon
+            .analyze_native_word(
+                "Kot",
+                10,
+                CaseHandling::ConditionallyCaseSensitive,
+                &segmentation,
+            )
+            .unwrap();
+        let second = lexicon
+            .analyze_native_word(
+                "Kot",
+                20,
+                CaseHandling::ConditionallyCaseSensitive,
+                &segmentation,
+            )
+            .unwrap();
+        let third = lexicon
+            .analyze_native_word(
+                "Kot",
+                30,
+                CaseHandling::ConditionallyCaseSensitive,
+                &segmentation,
+            )
+            .unwrap();
+
+        assert_eq!(first.0[0].start_node, 10);
+        assert_eq!(second.0[0].start_node, 20);
+        assert_eq!(third.0[0].start_node, 30);
+        assert_eq!(third.0[0].end_node, 31);
+        assert_eq!(third.1, 31);
+        assert_eq!(third.0[0].lemma, "kot");
+        let stats = lexicon.word_template_cache.stats().unwrap();
+        assert_eq!(stats.first_seen, 1);
+        assert_eq!(stats.second_seen, 1);
+        assert_eq!(stats.inserts, 1);
+        assert_eq!(stats.hits, 1);
+    }
+
+    #[test]
+    fn word_template_cache_does_not_store_ign_only_results() {
+        let lexicon =
+            BinaryAnalyzerLexicon::from_bytes(binary_analyzer_dictionary_bytes()).unwrap();
+        let segmentation = SegmentationPreset::default();
+
+        for start_node in [0, 10, 20] {
+            let (interps, next_node) = lexicon
+                .analyze_native_word(
+                    "pies",
+                    start_node,
+                    CaseHandling::ConditionallyCaseSensitive,
+                    &segmentation,
+                )
+                .unwrap();
+            assert_eq!(next_node, start_node + 1);
+            assert!(interps.iter().all(MorphInterpretation::is_ign));
+        }
+
+        let stats = lexicon.word_template_cache.stats().unwrap();
+        assert_eq!(stats.inserts, 0);
+        assert_eq!(stats.hits, 0);
+        assert_eq!(stats.first_seen, 0);
+        assert_eq!(stats.reject_admission, 3);
+    }
+
+    #[test]
+    fn word_template_cache_respects_case_handling_key() {
+        let lexicon =
+            BinaryAnalyzerLexicon::from_bytes(binary_titlecase_analyzer_dictionary_bytes())
+                .unwrap();
+        let segmentation = SegmentationPreset::default();
+
+        lexicon
+            .analyze_native_word(
+                "kot",
+                0,
+                CaseHandling::ConditionallyCaseSensitive,
+                &segmentation,
+            )
+            .unwrap();
+        lexicon
+            .analyze_native_word(
+                "kot",
+                1,
+                CaseHandling::ConditionallyCaseSensitive,
+                &segmentation,
+            )
+            .unwrap();
+
+        let strict = lexicon
+            .analyze_native_word("kot", 2, CaseHandling::StrictlyCaseSensitive, &segmentation)
+            .unwrap();
+
+        assert!(strict.0.iter().all(MorphInterpretation::is_ign));
+        let stats = lexicon.word_template_cache.stats().unwrap();
+        assert_eq!(stats.inserts, 1);
+        assert_eq!(stats.hits, 0);
+        assert_eq!(stats.first_seen, 1);
+        assert_eq!(stats.reject_admission, 1);
+    }
+
+    #[test]
+    fn word_template_cache_hits_before_append_whitespace_decoration() {
+        let lexicon =
+            BinaryAnalyzerLexicon::from_bytes(binary_analyzer_dictionary_bytes()).unwrap();
+        let engine = Engine::builder()
+            .lexicon(lexicon.clone())
+            .config(crate::Config::default().with_whitespace(crate::WhitespaceHandling::Append))
+            .build();
+
+        let analyzed = engine.analyze(" Kot Kot Kot ").unwrap();
+
+        assert_eq!(
+            analyzed
+                .iter()
+                .map(|interp| interp.orth.as_str())
+                .collect::<Vec<_>>(),
+            [" Kot ", "Kot ", "Kot "]
+        );
+        assert!(analyzed.iter().all(|interp| interp.tag_id == 42));
+        let stats = lexicon.word_template_cache.stats().unwrap();
+        assert_eq!(stats.inserts, 1);
+        assert_eq!(stats.hits, 1);
+    }
+
+    #[test]
+    fn word_template_cache_preserves_continuous_numbering_with_keep_whitespace() {
+        let lexicon =
+            BinaryAnalyzerLexicon::from_bytes(binary_analyzer_dictionary_bytes()).unwrap();
+        let engine = Engine::builder()
+            .lexicon(lexicon.clone())
+            .config(
+                crate::Config::default()
+                    .with_numbering(crate::NumberingScope::Continuous)
+                    .with_whitespace(crate::WhitespaceHandling::Keep),
+            )
+            .build();
+        let mut session = engine.session();
+
+        let first = session.analyze("Kot Kot").unwrap();
+        let second = session.analyze("Kot").unwrap();
+
+        assert_eq!(first[0].start_node, 0);
+        assert_eq!(first[1].start_node, 1);
+        assert!(first[1].is_whitespace());
+        assert_eq!(first[2].start_node, 2);
+        assert_eq!(second[0].start_node, 3);
+        assert_eq!(second[0].end_node, 4);
+        let stats = lexicon.word_template_cache.stats().unwrap();
+        assert_eq!(stats.inserts, 1);
+        assert_eq!(stats.hits, 1);
     }
 
     #[test]

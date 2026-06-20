@@ -56,54 +56,80 @@ generator) and these public Polish corpora:
 
 ### Hardware
 
-Numbers below were measured on an **Apple Silicon** laptop (12 performance + 4
-efficiency cores, macOS / Darwin), C++ built `-O3`, Rust built `--release` with
-thin-LTO + PGO + mimalloc. **Absolute timings are machine-specific** — on a
-typical Linux x86-64 server they differ, but the per-core speedup and the
-near-linear multi-core scaling hold the same way (the design is portable; see
-*Portability* below).
+Absolute timings are machine-specific. The current tables were measured on:
+
+| component | value |
+|-----------|-------|
+| CPU | AMD Ryzen 9 7950X, 16 cores / 32 threads |
+| RAM | 124 GiB |
+| C++ CLI build | upstream C++ source, `-O3 -DNDEBUG` |
+| Rust CLI build | `--release`, thin-LTO, PGO |
+| Rust Python build | `maturin develop --release` |
+| allocator | mimalloc in the CLI/Python crates |
+
+C++ reference comparisons can be reproduced locally when the upstream C++
+binaries are available under `build-cpp-ref-O2/`.
 
 ## Results
 
-All rows are **byte-identical** to the C++ reference.
+All correctness rows are **byte-identical** to the checked reference output. The
+current Rust build includes the bounded positive word-template cache for
+repeated word analyses; it changes performance only, not API shape or results.
 
-### CLI — full corpus (C++ `-O3` vs Rust)
+### CLI — C++ reference vs current Rust
 
-| corpus (lines)   | stack              | time    | lines/s | peak RSS |
-|------------------|--------------------|---------|---------|----------|
-| msmarco (300k)   | C++ `-O3`          | 39.82s  | 7,535   | 28.6 MB  |
-|                  | Rust, 1 thread     | 22.54s  | 13,311  | 25.3 MB  |
-|                  | Rust, all cores    | 2.04s   | 147,073 | 256 MB   |
-| c4pl (400k)      | C++ `-O3`          | 27.11s  | 14,755  | 109.6 MB |
-|                  | Rust, 1 thread     | 14.49s  | 27,604  | 45.2 MB  |
-|                  | Rust, all cores    | 1.44s   | 277,979 | 261 MB   |
-| wiki_pl (1.5M)   | C++ `-O3`          | 65.86s  | 22,775  | 29.6 MB  |
-|                  | Rust, 1 thread     | 34.99s  | 42,865  | 26.4 MB  |
-|                  | Rust, all cores    | 3.64s   | 412,531 | 207 MB   |
+README-style full-corpus run with the original C++ implementation and the
+current Rust implementation on the same machine. The Rust parallel rows use
+`--threads 0`, which resolves to 32 worker threads on this host.
 
-Per core Rust is **1.77–1.88× faster** and usually leaner in RAM; with
-`--threads 0` (all cores) it is **18–19.5× faster than single-threaded C++**.
-The all-cores RSS (~200–260 MB) is the opt-in cost of a private decode cache per
-worker; serial/default mode stays ~25–45 MB. The generator is **~2.8× faster**
-per core and also leaner.
+| corpus (lines)   | stack              | time   | lines/s | vs C++ | peak RSS | output |
+|------------------|--------------------|--------|---------|--------|----------|--------|
+| msmarco (300k)   | C++ `-O3`          | 34.37s | 8,729   | 1.00x  | 34.3 MB  | reference |
+|                  | Rust, 1 thread     | 10.78s | 27,832  | 3.19x  | 44.9 MB  | identical |
+|                  | Rust, 32 threads   | 2.16s  | 139,192 | 15.95x | 418.8 MB | identical |
+| c4pl (400k)      | C++ `-O3`          | 23.04s | 17,361  | 1.00x  | 79.2 MB  | reference |
+|                  | Rust, 1 thread     | 8.71s  | 45,928  | 2.65x  | 74.9 MB  | identical |
+|                  | Rust, 32 threads   | 1.92s  | 208,058 | 11.98x | 452.8 MB | identical |
+| wiki_pl (1.5M)   | C++ `-O3`          | 54.84s | 27,352  | 1.00x  | 35.3 MB  | reference |
+|                  | Rust, 1 thread     | 20.30s | 73,898  | 2.70x  | 52.9 MB  | identical |
+|                  | Rust, 32 threads   | 7.47s  | 200,754 | 7.34x  | 354.8 MB | identical |
 
-### Python bindings — 200k-line subset (C++/SWIG vs Rust/PyO3)
+The timing rows redirect analyzer output to `/dev/null`. Byte identity was
+checked separately with streaming SHA-256 over full stdout; Rust matches the C++
+reference on all three full corpora above, in both serial and 32-thread modes.
+The 32-thread RSS is the opt-in cost of per-worker analyzer state and caches;
+serial/default mode stays much smaller and is the best mode for embedded or
+memory-sensitive use.
 
-| corpus  | stack               | time   | lines/s | peak RSS |
-|---------|---------------------|--------|---------|----------|
-| msmarco | C++ `_morfeusz2` SWIG | 71.63s | 2,792 | 276.5 MB |
-|         | Rust `morfeusz2_rs` PyO3 | 35.60s | 5,619 | 201.4 MB |
-| c4pl    | C++ SWIG            | 35.79s | 5,589   | 213.8 MB |
-|         | Rust PyO3           | 17.54s | 11,403  | 162.0 MB |
-| wiki_pl | C++ SWIG            | 32.45s | 6,164   | 160.0 MB |
-|         | Rust PyO3           | 16.34s | 12,242  | 122.5 MB |
+### Python bindings — current PyO3 throughput
 
-The Rust `morfeusz2_rs` module is a **drop-in API replacement** (same
+The Python extension uses the same Rust core as the CLI. Its throughput is lower
+than the CLI because Python still has to allocate lists/tuples and format Python
+objects.
+
+README-style dump mode: high-level `Morfeusz(...).analyse()` tuples serialized
+to stdout on 200k-line subsets.
+
+| corpus  | time   | lines/s | peak RSS | output |
+|---------|--------|---------|----------|--------|
+| msmarco | 28.21s | 7,090   | 207.0 MB | identical |
+| c4pl    | 15.15s | 13,198  | 162.7 MB | identical |
+| wiki_pl | 13.74s | 14,554  | 137.9 MB | identical |
+
+Pure `analyse()` loop mode: Python tuples are still built, but no giant dump is
+written.
+
+| corpus  | time   | lines/s |
+|---------|--------|---------|
+| msmarco | 13.06s | 15,314  |
+| c4pl    | 7.66s  | 26,096  |
+| wiki_pl | 6.90s  | 28,979  |
+
+The Rust `morfeusz2_rs` module remains a **drop-in API replacement** (same
 `Morfeusz(...).analyse()` tuples, generator, DAG/tag expansion, low-level
 `_Morfeusz`, `MorphInterpretation`, `IdResolver`, `ResultsIterator`), builds an
-abi3 wheel via `maturin`, supports free-threaded (no-GIL) CPython 3.14, and runs
-**~2× faster at ~0.73–0.77× the memory** of the C++/SWIG binding — identical
-output.
+abi3 wheel via `maturin`, supports free-threaded (no-GIL) CPython 3.14, and
+keeps identical Python-level output.
 
 ### Drop-in replacement for the official `morfeusz2`
 
@@ -154,9 +180,8 @@ under `build-cpp-ref-O2/` at this repo's root (the diff tooling looks there);
 python3 morfeusz-rs/tests/diff_corpus/download_corpora.py   # corpora -> /tmp/bench
 bash   morfeusz-rs/tests/diff_corpus/pgo_build.sh           # PGO+mimalloc CLI
 bash   morfeusz-rs/tests/diff_corpus/corpora_diff.sh        # byte-identity vs C++ (RUST_THREADS=0 for all cores)
-python3 morfeusz-rs/tests/diff_corpus/full_compare.py       # the tables above (CLI + Python bindings)
 /tmp/morf-builder-venv/bin/python \
-       morfeusz-rs/tests/diff_corpus/py_parallel_check.py   # analyse_many() correctness + speedup
+       morfeusz-rs/tests/diff_corpus/py_parallel_check.py   # analyse_many() correctness + throughput
 ```
 
 ## Python wheel
@@ -203,51 +228,6 @@ import morfeusz2_rs as morfeusz2
 m = morfeusz2.Morfeusz(dict_name="sgjp", dict_path="/path/to/sgjp-dict-dir")
 print(m.analyse("Ala ma kota"))
 ```
-
-## Further optimization ideas
-
-Per *single-call* analysis the code is near its algorithmic ceiling (~50% of
-runtime is the inherent FSA + segmentation DFS). The highest-value Python-binding
-wins — GIL release and the batch `analyse_many` — are already implemented (see
-above); the remaining ideas are in deployment and incremental per-core/memory
-work. Ordered roughly by value-to-effort; all must keep byte-identical output.
-
-**Per-core speed / memory**
-- **Share output strings via `Arc<str>`**: orth is currently cloned per
-  interpretation (~226M `String` allocs on the 113M-interp set); sharing one
-  orth across a chunk's interpretations, and reusing it for identity-form lemmas,
-  cuts allocations and peak RAM (~3-5%). Trade-off: changes
-  `MorphInterpretation`'s field types (internal Rust API only; CLI/Python/C
-  consumers read `&str`).
-- **`mmap` the dictionary** (binary-only `memmap2`) instead of reading into
-  `Arc<[u8]>`: faster cold start, lazy paging, and pages shared across processes
-  and threads — lower RSS, especially for many-process / many-thread deployments.
-- **SIMD** the FSA label scan and ASCII case-folding (portable-simd). Speculative
-  — profile first; the DFS is branch-bound, not obviously vectorizable.
-- **Inline storage** for the common single-segment path buffers (a tiny
-  hand-rolled inline vector keeps the core dependency-free). Low ROI now that
-  mimalloc absorbs most of the per-word allocation churn.
-
-**Throughput / parallel**
-- **Parallelize `CONTINUOUS` numbering** (currently serial): analyze each line
-  from node 0 in parallel, then prefix-sum the per-line node counts to offset —
-  preserves identity.
-- **Lower the all-cores RSS** (~200-260 MB = N private 32K-group decode caches):
-  a smaller per-thread cap, or a shared read-mostly cache (immutable snapshot
-  read lock-free + per-thread write-through) to recover cross-thread reuse
-  without the lock contention that makes naive sharing scale *negatively*.
-- **Reader-thread pipelining** (only the writer overlaps today) — helps when
-  input is a slow pipe rather than a page-cached file.
-
-**Build / deployment**
-- **PGO on the target platform**: gather the profile in Linux CI on a production
-  corpus instead of reusing a macOS profile — PGO helps most when the profile
-  matches production.
-- **`-C target-cpu=native`** (or a chosen feature baseline) for self-built
-  deployments, on top of PGO. Caveat: the binary is then not portable across CPU
-  generations.
-- **LLVM BOLT** post-link optimization on Linux for a few extra percent on the
-  branchy FSA code, layered on PGO + LTO.
 
 ## Layout
 
