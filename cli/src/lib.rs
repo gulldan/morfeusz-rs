@@ -495,7 +495,11 @@ fn process_stdin_parallel(
                 batch.clear();
                 while batch.len() < BATCH_LINES {
                     let mut line_bytes = Vec::new();
-                    if stdin.read_until(b'\n', &mut line_bytes).map_err(Error::Io)? == 0 {
+                    if stdin
+                        .read_until(b'\n', &mut line_bytes)
+                        .map_err(Error::Io)?
+                        == 0
+                    {
                         break;
                     }
                     if line_bytes.ends_with(b"\n") {
@@ -528,7 +532,12 @@ fn process_stdin_parallel(
                                     Processor::Generator => local.generate(line.as_ref())?,
                                 };
                                 let mut block = String::new();
-                                format_results_into(&mut block, local, &results, print_node_numbers);
+                                format_results_into(
+                                    &mut block,
+                                    local,
+                                    &results,
+                                    print_node_numbers,
+                                );
                                 Ok::<_, Error>(encode_block(charset, block))
                             },
                         )

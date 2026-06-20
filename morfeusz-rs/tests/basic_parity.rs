@@ -181,8 +181,7 @@ fn supports_continuous_token_numbering() {
 #[test]
 fn loads_plain_dictionary_fixture_with_names_and_labels() {
     let resolver =
-        TsvLexiconLoader::tagset_from_path("../tests/analyzer/test_qualifiers/tagset.dat")
-            .unwrap();
+        TsvLexiconLoader::tagset_from_path("../tests/analyzer/test_qualifiers/tagset.dat").unwrap();
     let dictionary = TsvLexiconLoader::from_str(
         include_str!("../../tests/analyzer/test_qualifiers/dictionary.tab"),
         resolver,

@@ -51,8 +51,7 @@ fn session_owns_continuous_numbering_state() {
 #[test]
 fn engine_loads_tsv_lexicon_via_builder() {
     let resolver =
-        TsvLexiconLoader::tagset_from_path("../tests/analyzer/test_qualifiers/tagset.dat")
-            .unwrap();
+        TsvLexiconLoader::tagset_from_path("../tests/analyzer/test_qualifiers/tagset.dat").unwrap();
     let dictionary = TsvLexiconLoader::from_str(
         include_str!("../../tests/analyzer/test_qualifiers/dictionary.tab"),
         resolver,
