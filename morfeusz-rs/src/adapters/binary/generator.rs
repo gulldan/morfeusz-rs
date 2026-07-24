@@ -345,19 +345,38 @@ pub(super) fn push_shifted_generator_interpretations(
     let Some((current, prefixes)) = chunks.split_last() else {
         return Ok(());
     };
-    let lemma = chunks.iter().map(|chunk| chunk.lemma).collect::<String>();
-    let orth_prefix = prefixes.iter().map(|chunk| chunk.lemma).collect::<String>();
+    let mut lemma =
+        String::with_capacity(chunks.iter().map(|chunk| chunk.lemma.len()).sum::<usize>());
+    for chunk in chunks {
+        lemma.push_str(chunk.lemma);
+    }
+    let mut orth_prefix = String::with_capacity(
+        prefixes
+            .iter()
+            .map(|chunk| chunk.lemma.len())
+            .sum::<usize>(),
+    );
+    for chunk in prefixes {
+        orth_prefix.push_str(chunk.lemma);
+    }
 
     for interp in decode_cache.interpretations(current.interpretations) {
         if !generator_homonym_matches(interp, required_homonym_id) {
             continue;
         }
         let mut morph = interp.to_morph_interpretation(current.lemma, 0, 0)?;
-        morph.orth = format!("{orth_prefix}{}", morph.orth);
+        let mut orth = String::with_capacity(orth_prefix.len() + morph.orth.len());
+        orth.push_str(&orth_prefix);
+        orth.push_str(&morph.orth);
+        morph.orth = orth;
         morph.lemma = if interp.homonym_id.is_empty() {
             lemma.clone()
         } else {
-            format!("{lemma}:{}", interp.homonym_id)
+            let mut with_homonym = String::with_capacity(lemma.len() + 1 + interp.homonym_id.len());
+            with_homonym.push_str(&lemma);
+            with_homonym.push(':');
+            with_homonym.push_str(&interp.homonym_id);
+            with_homonym
         };
         result.push(morph);
     }

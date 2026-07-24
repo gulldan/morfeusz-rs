@@ -24,9 +24,10 @@ impl FsaImplementation {
 
 #[derive(Debug, Clone)]
 pub struct BinaryDictionaryData {
-    // `Arc<[u8]>` so a dictionary can be shared across threads (and across
-    // per-thread analyzer clones) without copying the multi-megabyte payload.
-    bytes: Arc<[u8]>,
+    // Keep the original allocation behind `Arc<Vec<_>>`: converting a `Vec`
+    // into `Arc<[u8]>` has to allocate and copy the multi-megabyte payload.
+    // The vector itself is immutable after loading and is shared by all forks.
+    bytes: Arc<Vec<u8>>,
     implementation: FsaImplementation,
     fsa_range: Range<usize>,
     epilogue_offset: usize,
@@ -84,7 +85,7 @@ impl BinaryDictionaryData {
             read_c_string_at(&bytes, copyright_start, "dictionary copyright")?;
 
         Ok(Self {
-            bytes: bytes.into(),
+            bytes: Arc::new(bytes),
             implementation,
             fsa_range,
             epilogue_offset,

@@ -11,6 +11,7 @@ pub(super) type GeneratorDecodeCacheMap = HashMap<
     Arc<[EncodedGeneratorInterpretation]>,
     BuildHasherDefault<FastInterpsGroupHasher>,
 >;
+type WordTemplateCacheMap = HashMap<u64, Vec<WordAnalysisTemplate>, FastU64BuildHasher>;
 
 #[derive(Default)]
 pub(super) struct FastInterpsGroupHasher(u64);
@@ -46,6 +47,69 @@ impl Hasher for FastInterpsGroupHasher {
 
     fn write_usize(&mut self, value: usize) {
         self.mix(value as u64);
+    }
+}
+
+/// The word-cache key is already a mixed `u64`, so a full SipHash round is
+/// redundant. Keep a per-cache random seed, though, so untrusted input cannot
+/// deliberately concentrate distinct keys in the same hash-table buckets.
+#[derive(Clone)]
+struct FastU64BuildHasher {
+    seed: u64,
+}
+
+impl Default for FastU64BuildHasher {
+    fn default() -> Self {
+        let random_state = RandomState::new();
+        let mut hasher = random_state.build_hasher();
+        hasher.write_u64(0x6d6f_7266_6575_737a);
+        Self {
+            seed: hasher.finish(),
+        }
+    }
+}
+
+impl BuildHasher for FastU64BuildHasher {
+    type Hasher = FastU64Hasher;
+
+    fn build_hasher(&self) -> Self::Hasher {
+        FastU64Hasher(self.seed)
+    }
+}
+
+struct FastU64Hasher(u64);
+
+impl FastU64Hasher {
+    fn mix(&mut self, value: u64) {
+        let mut mixed = value ^ self.0;
+        mixed ^= mixed >> 30;
+        mixed = mixed.wrapping_mul(0xbf58_476d_1ce4_e5b9);
+        mixed ^= mixed >> 27;
+        mixed = mixed.wrapping_mul(0x94d0_49bb_1331_11eb);
+        self.0 = mixed ^ (mixed >> 31);
+    }
+}
+
+impl Hasher for FastU64Hasher {
+    fn finish(&self) -> u64 {
+        self.0
+    }
+
+    fn write(&mut self, bytes: &[u8]) {
+        let mut chunks = bytes.chunks_exact(8);
+        for chunk in &mut chunks {
+            self.mix(u64::from_ne_bytes(chunk.try_into().expect("8-byte chunk")));
+        }
+        let remainder = chunks.remainder();
+        if !remainder.is_empty() {
+            let mut last = [0u8; 8];
+            last[..remainder.len()].copy_from_slice(remainder);
+            self.mix(u64::from_ne_bytes(last));
+        }
+    }
+
+    fn write_u64(&mut self, value: u64) {
+        self.mix(value);
     }
 }
 
@@ -169,7 +233,7 @@ pub(super) struct WordTemplateCacheStats {
 
 #[derive(Debug)]
 pub(super) struct WordTemplateCache {
-    buckets: HashMap<u64, Vec<WordAnalysisTemplate>>,
+    buckets: WordTemplateCacheMap,
     seen_once: Box<[u64]>,
     entries: usize,
     #[cfg(test)]
@@ -179,7 +243,7 @@ pub(super) struct WordTemplateCache {
 impl Default for WordTemplateCache {
     fn default() -> Self {
         Self {
-            buckets: HashMap::with_capacity(WORD_TEMPLATE_CACHE_MAX_WORDS),
+            buckets: WordTemplateCacheMap::with_hasher(FastU64BuildHasher::default()),
             seen_once: vec![0; WORD_TEMPLATE_SEEN_ONCE_SLOTS].into_boxed_slice(),
             entries: 0,
             #[cfg(test)]

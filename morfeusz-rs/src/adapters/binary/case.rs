@@ -70,7 +70,7 @@ pub(super) fn lowercase_with_original_boundaries(text: &str) -> NormalizedInput<
         return NormalizedInput::Borrowed(text);
     }
 
-    let mut normalized = String::new();
+    let mut normalized = String::with_capacity(text.len());
     let mut boundaries = Vec::with_capacity(text.len() + 1);
     boundaries.push((0usize, 0usize));
 

@@ -519,11 +519,9 @@ impl<'a> VLength2Fsa<'a> {
 pub(super) fn validate_reachable_vlength1_states(data: &[u8]) -> Result<()> {
     let mut seen = OffsetBitSet::new(data.len());
     let mut stack = vec![V1_INITIAL_STATE_OFFSET];
+    let _ = seen.insert(V1_INITIAL_STATE_OFFSET);
 
     while let Some(offset) = stack.pop() {
-        if !seen.insert(offset) {
-            continue;
-        }
         if offset < V1_INITIAL_STATE_OFFSET {
             return Err(Error::invalid_dictionary(
                 "VLength1 target precedes initial state",
@@ -557,7 +555,9 @@ pub(super) fn validate_reachable_vlength1_states(data: &[u8]) -> Result<()> {
                 ));
             }
             validate_min_len(data, next_offset + 1, "VLength1 target state")?;
-            stack.push(next_offset);
+            if seen.insert(next_offset) {
+                stack.push(next_offset);
+            }
             cursor = offset_end;
         }
     }

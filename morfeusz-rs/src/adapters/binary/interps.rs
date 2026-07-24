@@ -233,14 +233,22 @@ impl EncodedGeneratorInterpretation {
         start_node: i32,
         end_node: i32,
     ) -> Result<MorphInterpretation> {
-        let mut orth = self.form.prefix_to_add.clone();
-        orth.push_str(drop_suffix_chars(lemma, self.form.suffix_to_cut as usize)?);
+        let stem = drop_suffix_chars(lemma, self.form.suffix_to_cut as usize)?;
+        let mut orth = String::with_capacity(
+            self.form.prefix_to_add.len() + stem.len() + self.form.suffix_to_add.len(),
+        );
+        orth.push_str(&self.form.prefix_to_add);
+        orth.push_str(stem);
         orth.push_str(&self.form.suffix_to_add);
 
         let lemma = if self.homonym_id.is_empty() {
             lemma.to_owned()
         } else {
-            format!("{lemma}:{}", self.homonym_id)
+            let mut with_homonym = String::with_capacity(lemma.len() + 1 + self.homonym_id.len());
+            with_homonym.push_str(lemma);
+            with_homonym.push(':');
+            with_homonym.push_str(&self.homonym_id);
+            with_homonym
         };
 
         Ok(MorphInterpretation {

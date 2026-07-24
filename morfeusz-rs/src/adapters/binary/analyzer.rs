@@ -8,6 +8,8 @@ pub struct BinaryAnalyzerLexicon {
     resolver: Arc<IdResolver>,
     segmentation_metadata: SegmentationMetadata,
     default_segmentation_variant_index: Option<usize>,
+    default_aggl_cache_code: Option<u8>,
+    default_praet_cache_code: Option<u8>,
     pub(super) analyzer_decode_cache: SharedAnalyzerGroupDecodeCache,
     pub(super) word_template_cache: SharedWordTemplateCache,
 }
@@ -27,11 +29,27 @@ impl BinaryAnalyzerLexicon {
         let segmentation_metadata = data.segmentation_metadata()?;
         let default_segmentation_variant_index =
             default_segmentation_fsa_variant_index(&segmentation_metadata);
+        let default_aggl_cache_code = option_code(
+            segmentation_metadata
+                .default_options
+                .get("aggl")
+                .map(String::as_str),
+            &[("strict", 1), ("permissive", 2), ("isolated", 3)],
+        );
+        let default_praet_cache_code = option_code(
+            segmentation_metadata
+                .default_options
+                .get("praet")
+                .map(String::as_str),
+            &[("split", 1), ("composite", 2)],
+        );
         Ok(Self {
             data,
             resolver,
             segmentation_metadata,
             default_segmentation_variant_index,
+            default_aggl_cache_code,
+            default_praet_cache_code,
             analyzer_decode_cache: SharedAnalyzerGroupDecodeCache::default(),
             word_template_cache: SharedWordTemplateCache::default(),
         })
@@ -41,14 +59,11 @@ impl BinaryAnalyzerLexicon {
         &self,
         orth: &str,
     ) -> Result<Option<Vec<EncodedAnalyzerInterpsGroup>>> {
-        let lookup: String = orth
-            .chars()
-            .map(crate::case_tables::to_lower_char)
-            .collect();
+        let lookup = lowercase_with_original_boundaries(orth);
         let Some(raw_match) = self
             .data
             .fsa_unchecked()
-            .try_recognize_loaded(lookup.as_bytes())?
+            .try_recognize_loaded(lookup.as_str().as_bytes())?
         else {
             return Ok(None);
         };
@@ -215,20 +230,17 @@ impl BinaryAnalyzerLexicon {
             CaseHandling::StrictlyCaseSensitive => 1,
             CaseHandling::IgnoreCase => 2,
         };
-        let aggl = segmentation.aggl().or_else(|| {
-            self.segmentation_metadata
-                .default_options
-                .get("aggl")
-                .map(String::as_str)
-        });
-        let praet = segmentation.praet().or_else(|| {
-            self.segmentation_metadata
-                .default_options
-                .get("praet")
-                .map(String::as_str)
-        });
-        let aggl_code = option_code(aggl, &[("strict", 1), ("permissive", 2), ("isolated", 3)])?;
-        let praet_code = option_code(praet, &[("split", 1), ("composite", 2)])?;
+        let aggl_code = match segmentation.aggl() {
+            Some(aggl) => option_code(
+                Some(aggl),
+                &[("strict", 1), ("permissive", 2), ("isolated", 3)],
+            )?,
+            None => self.default_aggl_cache_code?,
+        };
+        let praet_code = match segmentation.praet() {
+            Some(praet) => option_code(Some(praet), &[("split", 1), ("composite", 2)])?,
+            None => self.default_praet_cache_code?,
+        };
         let config_key = case_code | ((aggl_code as u16) << 2) | ((praet_code as u16) << 5);
         Some(WordTemplateCacheKey {
             hash: word_template_hash(word, config_key),

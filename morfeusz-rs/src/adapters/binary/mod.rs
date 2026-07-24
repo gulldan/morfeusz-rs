@@ -1,6 +1,7 @@
+use std::collections::hash_map::RandomState;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
-use std::hash::{BuildHasherDefault, Hasher};
+use std::hash::{BuildHasher, BuildHasherDefault, Hasher};
 use std::ops::Range;
 use std::path::Path;
 use std::sync::{Arc, Mutex};

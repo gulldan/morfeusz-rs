@@ -170,6 +170,20 @@ impl Engine {
                 .analyze_native_word(text, start_node, case, seg);
         }
 
+        if whitespace == WhitespaceHandling::Skip {
+            let mut result = Vec::new();
+            let mut node = start_node;
+            for word in text
+                .split(is_morfeusz_whitespace)
+                .filter(|word| !word.is_empty())
+            {
+                let (interps, next) = self.lexicon.analyze_native_word(word, node, case, seg)?;
+                result.extend(interps);
+                node = next;
+            }
+            return Ok((result, node));
+        }
+
         let runs = whitespace_runs(text);
         let mut result = Vec::new();
         let mut node = start_node;
@@ -183,7 +197,7 @@ impl Engine {
                         result.push(MorphInterpretation::create_whitespace(
                             node,
                             node + 1,
-                            run.text.clone(),
+                            run.text.to_owned(),
                         ));
                         node += 1;
                     }
@@ -203,14 +217,14 @@ impl Engine {
                 && index > 0
                 && runs[index - 1].is_whitespace
             {
-                Some(runs[index - 1].text.clone())
+                Some(runs[index - 1].text)
             } else {
                 None
             };
             let trailing = if whitespace == WhitespaceHandling::Append {
                 runs.get(index + 1)
                     .filter(|next| next.is_whitespace)
-                    .map(|next| next.text.clone())
+                    .map(|next| next.text)
             } else {
                 None
             };
@@ -218,9 +232,9 @@ impl Engine {
 
             let (mut interps, next) = self
                 .lexicon
-                .analyze_native_word(&run.text, node, case, seg)?;
+                .analyze_native_word(run.text, node, case, seg)?;
             if leading.is_some() || trailing.is_some() {
-                append_whitespace_to_word(&mut interps, leading.as_deref(), trailing.as_deref());
+                append_whitespace_to_word(&mut interps, leading, trailing);
             }
             result.extend(interps);
             node = next;
@@ -689,10 +703,16 @@ struct Segment {
     is_whitespace: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct WhitespaceRun<'a> {
+    text: &'a str,
+    is_whitespace: bool,
+}
+
 /// Splits text into maximal runs of whitespace and non-whitespace, used by the
 /// native (binary FSA) analysis path. Unlike [`tokenize`], non-whitespace runs
 /// are kept whole — word-internal segmentation is the FSA's job.
-fn whitespace_runs(text: &str) -> Vec<Segment> {
+fn whitespace_runs(text: &str) -> Vec<WhitespaceRun<'_>> {
     let mut runs = Vec::new();
     let mut iter = text.char_indices().peekable();
     while let Some((start, ch)) = iter.next() {
@@ -705,8 +725,8 @@ fn whitespace_runs(text: &str) -> Vec<Segment> {
             iter.next();
             end = next_index + next_ch.len_utf8();
         }
-        runs.push(Segment {
-            text: text[start..end].to_owned(),
+        runs.push(WhitespaceRun {
+            text: &text[start..end],
             is_whitespace,
         });
     }
